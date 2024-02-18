@@ -5,6 +5,7 @@ const houseModel = require('../Model/houseModel')
 const cloudinary = require('../Utility/cloudinary.js')
 const jwt = require("jsonwebtoken")
 
+
 exports.postHouse = async (req,res)=>{
   try {
     //  const id = req.params.categoryId;
@@ -58,7 +59,8 @@ const uploadedImages = await Promise.all(
       amount,
       description,
       categoryId,
-      agentId: agent._id
+      agentId: agent._id,
+      companyName:agent.companyName
 
        
     });
@@ -88,6 +90,7 @@ exports.sponsorPost = async(req,res)=>{
     const houseId = req.params.houseId;
     //get the original house from database
     const originalHouse = await houseModel.findById(houseId)
+    const agent = await agentModel.find()
 
     if(!originalHouse){
       return res.status(404).json({
@@ -104,6 +107,7 @@ exports.sponsorPost = async(req,res)=>{
       amount:originalHouse.amount,
       isSponsored:true,
       agentId:originalHouse.agentId,
+      agent:agent.companyName,
       images:originalHouse.images
 
     })
@@ -132,7 +136,7 @@ exports.getAgentSponsoredPost = async(req,res)=>{
       isSponsored:true
     })
     res.status(200).json({
-      message:`Sponsored posts for agent ${agentId} within last week`,
+      message:`Sponsored posts for agent ${sponsoredPosts.agentId} ${agent.companyName} within last week`,
       data:sponsoredPosts
     })
 
@@ -193,31 +197,157 @@ exports.getOneHouse = async (req,res)=>{
     }  
 }
 
-exports.updateHouse = async (req,res)=>{
-    try{
-      const id = req.params.id
-      const {title,desc,Images}= req.body
-      const updatedhouse= await houseModel.findByIdAndUpdate(id,{title,desc,Images},{new:true})
+// exports.updateHouse = async (req,res)=>{
+//     try{
+//       const id = req.params.id
+//       const {type,amount,location,desc,Images}= req.body
+//       const updatedhouse= await houseModel.findByIdAndUpdate(id,{type,amount,location,desc,Images},{new:true})
     
-      if(!updatedhouse){
-        return res.status(400).json({
-          message:'house not updated',
-        })
-      }
-      else{
-        return res.status(200).json({
-          message: "updated successfully",
-          data:updatedhouse
-        })
-      }
-    }catch(error){
-      res.status(500).json({
-        message: error.message
-      })
+//       if(!updatedhouse){
+//         return res.status(400).json({
+//           message:'house not updated',
+//         })
+//       }
+//       else{
+//         return res.status(200).json({
+//           message: "updated successfully",
+//           data:updatedhouse
+//         })
+//       }
+//     }catch(error){
+//       res.status(500).json({
+//         message: error.message
+//       })
+//     }
+    
+//     }
+
+
+
+// Multer setup for handling file uploads
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+
+// Edit House Function
+exports.editHouse = async (req, res) => {
+  try {
+    const houseId = req.params.houseId;
+    const { type, location, description, amount } = req.body;
+
+    // Fetch the house to edit
+    const house = await houseModel.findById(houseId);
+
+    // Check if the house exists and the agent is the owner
+    if (!house || house.agentId !== req.headers._agentId) {
+      return res.status(400).json({
+        message: "House not found or you don't have permission to edit",
+        error: "Not Found",
+      });
     }
-    
+
+    // Update house details
+    house.type = type || house.type;
+    house.location = location || house.location;
+    house.description = description || house.description;
+    house.amount = amount || house.amount;
+
+    // Handle image updates
+    if (req.files && req.files.length > 0) {
+      const uploadedImages = await Promise.all(
+        req.files.map(async (file) => {
+          const result = await cloudinary.uploader.upload(file.buffer.toString('base64'), { resource_type: 'auto' });
+          return result.secure_url;
+        })
+      );
+      house.images = uploadedImages;
     }
-    
+
+    // Save the updated house
+    await house.save();
+
+    res.status(200).json({
+      message: "House updated successfully",
+      data: house,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error during updating house",
+      error: error.message,
+    });
+  }
+};
+
+
+
+// Export the router
+
+// exports.editHouse = async (req, res) => {
+//   try {
+//     const houseId = req.params.houseId;
+//     const {type, amount,location, images, description } = req.body;
+
+//     // Fetch the house from the database
+//     const house = await houseModel.findById(houseId);
+
+//     // Check if the house exists
+//     if (!house) {
+//       return res.status(404).json({
+//         message: "House not found",
+//       });
+//     }
+
+//     // Check if the logged-in agent owns the house
+//     if (house.agentId !== req.agent.agentId.toString()) {
+//       return res.status(403).json({
+//         message: "You are not authorized to edit this house",
+//       });
+//     }
+
+//     // Update the house details
+//     if (images) {
+//       // If images are provided, update the images array
+//       const uploadedImages = await Promise.all(
+//         images.map(async (file) => {
+//           const result = await cloudinary.uploader.upload(file.path, {
+//             resource_type: "auto",
+//           });
+//           return result.secure_url;
+//         })
+//       );
+//       house.images = uploadedImages;
+//     }
+
+//     if (type) {
+//       // If type is provided, update the type
+//       house.type = type;
+//     }
+//     if (description) {
+//       // If description is provided, update the description
+//       house.description = description;
+//     }
+//     if (amount) {
+//       // If amount is provided, update the amount
+//       house.amount = amount;
+//     }
+//     if (location) {
+//       // If location is provided, update the location
+//       house.amount = amount;
+//     }
+
+//     // Save the updated house details
+//     await house.save();
+
+//     res.status(200).json({
+//       message: "House details updated successfully",
+//       data: house,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error during house update",
+//       error: error.message,
+//     });
+//   }
+// };
     
 exports.getAllHouse = async (req,res)=>{
     try{

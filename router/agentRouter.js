@@ -1,6 +1,6 @@
 const express = require('express')
 const { login, signUp, logOut,updateIsGood,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,verify, getAgentHouses } = require('../Controller/agentController')
-const { postHouse,sponsorPost, updateHouse, getOneHouse, getAllHouse,getAgentSponsoredPost, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
+const { postHouse,sponsorPost, updateHouse, getOneHouse,editHouse, getAllHouse,getAgentSponsoredPost, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
 const authenticate = require('../middleware/authenticate')
 const authorization = require('../middleware/authorization')
@@ -31,7 +31,10 @@ router.get('/forRentProperty/:id', getAgentHousesForRent)
 router.delete('/deleteagent/:id', deleteOneAgent)
 
 // router.post('/logout/:id', logOut)
+
 router.put('/Category', createCategory)
+
+//get Category
 router.get('/getCate',getCategory)
 
 router.get('/getOneCate/:id', getOneCate)
@@ -49,7 +52,12 @@ router.put('/sponsorPost/:houseId', sponsorPost)
 router.get('/getSponsored/:agentId', getAgentSponsoredPost)
 
 
-router.put('/editpost/:id', updateHouse)
+// router.put('/editpost/:id', updateHouse)
+// router.put('/editHouse/:houseId', editHouse)
+// Edit
+router.patch('/house/edit/:houseId', upload.array('images'), editHouse);
+
+
 router.get('/gethouse/:id', getOneHouse)
 router.get('/getallhouse',getAllHouse)
 router.delete('/deletehouse/:id', deleteOneHouse)

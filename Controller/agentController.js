@@ -11,7 +11,7 @@ const generateDynamicEmail =require('../html.js')
 
 exports.signUp = async(req,res)=>{
     try {
-        const {fullName,email,phoneNumber,password,confirmPassword,address} = req.body
+        const {companyName,fullName,email,phoneNumber,password,confirmPassword,address} = req.body
         // const file = req.files
 
         const exisitingAgent = await agentModel.findOne({email});
@@ -45,6 +45,7 @@ exports.signUp = async(req,res)=>{
         const regCertResult = await cloudinary.uploader.upload(regCertFile)
         // const result = await cloudinary.uploader.upload(files.path)
         const agent = await agentModel.create({
+            companyName,
             fullName,
             email:email.toLowerCase(),
             phoneNumber,
@@ -57,11 +58,6 @@ exports.signUp = async(req,res)=>{
 
 
         })
-        const token = jwt.sign({
-            agentId:agent._id,
-            email:agent.email
-        }, process.env.jwtSecret, {expiresIn:'1d'})
-
         
         await agent.save()
 
@@ -78,7 +74,6 @@ exports.signUp = async(req,res)=>{
     
         return res.status(200).json({
             message:('Agent registered'),
-            token,
             agent
         })
 
@@ -120,12 +115,17 @@ exports.login = async (req,res) => {
 
     //   agent.logOut = false
 
-      
-  
+    const token = jwt.sign({
+        agentId:agentExist._id,
+        email:agentExist.email
+    }, process.env.jwtSecret, {expiresIn:'1d'})
+    
+     agentExist.token = token 
      const agent = await agentExist.save()
      
     res.status(200).json({
     message:'Login succesful',
+    token,
     data:agent,
    })
   
@@ -361,7 +361,7 @@ exports.getAgentHousesForSale = async(req,res)=>{
     // console.log('Houses for Sale', housesForSale)
 
         res.status(200).json({
-            messsage:`Houses posted by ${agent.fullName} under for sale`,
+            messsage:`Houses posted by ${agent.companyName} under for sale`,
             housesForSale
         })
 
@@ -393,7 +393,7 @@ exports.getAgentHousesForRent = async(req,res)=>{
         
 
         res.status(200).json({
-            messsage:`Houses posted by ${agent.fullName} under for rent are listed below`,
+            messsage:`Houses posted by ${agent.companyName} under for rent are listed below`,
            
             housesForRent:filteredHousesForRent
         })
@@ -428,7 +428,7 @@ exports.getAgentHousesForRent = async(req,res)=>{
         
 
         res.status(200).json({
-            messsage:`Houses posted by ${agent.fullName} under for rent are listed below`,
+            messsage:`Houses posted by ${agent.companyName} under for rent are listed below`,
            
             housesForRent:filteredHousesForRent
         })

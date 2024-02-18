@@ -5,9 +5,16 @@ const agentSchema = new mongoose.Schema({
         type:String,
         required:true
      },
+     companyName:{
+        type:String,
+        required:true,
+        unique:true,
+        min:3
+     },
      email:{
         type:String,
-        required:true
+        required:true,
+        unique:true
      },
      phoneNumber:{
         type:String,
@@ -47,8 +54,8 @@ category:{
    ref:'category'
 },
   blackList:{
-   type:Array,
-   default: false
+   type:[],
+   default: String
 }
 
 },{timestamps:true})
