@@ -54,13 +54,18 @@ router.get('/getSponsored/:agentId', getAgentSponsoredPost)
 
 // router.put('/editpost/:id', updateHouse)
 // router.put('/editHouse/:houseId', editHouse)
-// Edit
+
+
+// Agent editing their house
 router.patch('/house/edit/:houseId', upload.array('images'), editHouse);
 
 
 router.get('/gethouse/:id', getOneHouse)
+
 router.get('/getallhouse',getAllHouse)
+
 router.delete('/deletehouse/:id', deleteOneHouse)
+
 router.delete('/deleteAllHouses', deleteAllHouses)
 
 router.get('/gethousebycate/:categoryId', getHousebyCate)

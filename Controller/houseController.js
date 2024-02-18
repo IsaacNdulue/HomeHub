@@ -379,17 +379,27 @@ exports.getAllHouse = async (req,res)=>{
         const id = req.params.id;
         const house = await houseModel.findByIdAndDelete(id);
         const agent = await agentModel.find()
+
+        if(!house){
+          return res.status(404).json({
+              message: 'House does not exist'
+          })
+      }
         if(agent.isVerified = false){
           return res.status(400).json({
             message:`Your account has not been verified you can't delete this property`
           })
         }
     
-        if(!house){
-            return res.status(404).json({
-                message: 'House does not exist'
-            })
+        //fetch category
+        const category = await cateModel.findOne({house:id})
+
+        if(category){
+          //removing the ID from the category's house array
+          category.house = category.house.filter(houseId => houseId.toString() !== id)
+          await category.save()
         }
+      
         res.status(200).json({
             message: 'House deleted'
         })
