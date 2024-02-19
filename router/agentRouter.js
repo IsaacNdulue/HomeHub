@@ -1,5 +1,5 @@
 const express = require('express')
-const { login, signUp, logOut,updateIsGood,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,verify, getAgentHouses } = require('../Controller/agentController')
+const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,verify, getAgentHouses } = require('../Controller/agentController')
 const { postHouse,sponsorPost, updateHouse, getOneHouse,editHouse, getAllHouse,getAgentSponsoredPost, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
 const authenticate = require('../middleware/authenticate')
@@ -17,7 +17,7 @@ router.post('/signup', upload.fields([
 //login
 router.post('/login', login)
 //verify
-router.patch('/verify/:userToken', verify )
+router.get('/verify/:id', verify )
 // get all agent
 router.get('/getallagent', getAllAgent)
 //get one agent
@@ -39,6 +39,9 @@ router.get('/getCate',getCategory)
 
 router.get('/getOneCate/:id', getOneCate)
 router.delete('/deleteOneCate/:id', deleteOneCate)
+
+//Make an admin
+router.get('/MakeAdmin', MakeAdmin)
 
 //Update is good for an agent
 router.put('/updateIsGood/:id', updateIsGood)

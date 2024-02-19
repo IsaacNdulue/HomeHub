@@ -65,7 +65,7 @@ exports.signUp = async(req,res)=>{
           // Sending a verification email to the agent
 
           const subject = 'Kindly verify your account';
-          const link = `${req.protocol}://${req.get('host')}/verify?token=${token}`;
+          const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}`;
           const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
           await sendEmail({
               email: agent.email,
@@ -144,24 +144,21 @@ exports.login = async (req,res) => {
 exports.verify = async(req,res)=>{
     try{
 // const id = req.params.id
-const agentToken = req.params.userToken
+const id = req.params.id
+
  
-const decoded = jwt.verify(agentToken,process.env.jwtSecret)
+// const decoded = jwt.verify(agentToken,process.env.jwtSecret)
 
-//getting my agent's id from the token
-const id = decoded.agentId;
+// //getting my agent's id from the token
+// const id = decoded.agentId;
 //check if the decoded token contains the expected agent's ID
-// if (decoded.agentId !== id){
-//     return res.status(403).json({error:'Invalid token for this agent'})
-// }
-
-const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new:true})
-
-if (!verifyAgent){
+if (!id){
     return res.status(404).json({
         error:'agent not found'
     })
 }
+
+const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new:true})
 
 res.status(200).json({
     message:`user with email:${verifyAgent.email} has been verified successfully`,
@@ -205,7 +202,7 @@ exports.MakeAdmin = async (req,res)=>{
         }
         const updateAdmin = await agentModel.findByIdAndUpdate(agentId,{isAdmin:true},{new:true})
         return res.status(200).json({
-            message:`${agent.fullName} has been verified`
+            message:`${updateAdmin.companyName} has been made Admin`
         })
     } catch (error) {
         return res.status(500).json({
