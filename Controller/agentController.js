@@ -17,8 +17,8 @@ exports.signUp = async(req,res)=>{
         const exisitingAgent = await agentModel.findOne({email});
         if(exisitingAgent){
             return res.status(400).json({
-                message:'User already exist',
-                data:exisitingAgent
+                message:'User already exist'
+
             })
         }
         if(confirmPassword !== password){
@@ -53,18 +53,19 @@ exports.signUp = async(req,res)=>{
             address,
             regCert:regCertResult.secure_url,
             documentImage:documentImageResult.secure_url
-         
-            
-
-
         })
+
+        const token = jwt.sign({
+            agentId:agent._id,
+            email:agent.email
+        }, process.env.jwtSecret, {expiresIn:'5m'})
         
         await agent.save()
 
           // Sending a verification email to the agent
 
           const subject = 'Kindly verify your account';
-          const link = `${req.protocol}://${req.get('host')}/updateuser/${agent.x}/${agent.token}`;
+          const link = `${req.protocol}://${req.get('host')}/verify?token=${token}`;
           const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
           await sendEmail({
               email: agent.email,
@@ -74,6 +75,7 @@ exports.signUp = async(req,res)=>{
     
         return res.status(200).json({
             message:('Agent registered'),
+            token,
             agent
         })
 
@@ -120,13 +122,13 @@ exports.login = async (req,res) => {
         email:agentExist.email
     }, process.env.jwtSecret, {expiresIn:'1d'})
     
-     agentExist.token = token 
-     const agent = await agentExist.save()
+
+    await agentExist.save()
      
     res.status(200).json({
     message:'Login succesful',
     token,
-    data:agent,
+    agentExist
    })
   
     } catch (error) {
