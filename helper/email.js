@@ -1,14 +1,19 @@
-const nodemailer =require ('nodemailer')
 
-const dotenv = require('dotenv').config()
+const nodemailer = require ('nodemailer');
+ require('dotenv').config()
 const sendEmail = async(options)=>{
     const transporter = nodemailer.createTransport({
-    service : process.env.service,
+    
+    host: prcess.env.service,
+    service : "gmail" ,
+    port: 587,
+    secure:true,
+
     auth:{
         user : process.env.user,
         pass : process.env.mailPassword,
-        secure:false
-    }
+        
+    },
     })
 
 
@@ -19,6 +24,7 @@ const sendEmail = async(options)=>{
         html: options.html
     }
     await transporter.sendMail(mailOption)
+    console.log('Message sent')
 }
 
 module.exports = sendEmail
