@@ -1,5 +1,4 @@
-//uerRouter
-const express=require('express');
+const express = require('express');
 const {signUp, verify, logIn, update, favoriteProperty,forgotPassword, resetPassword, logOut, deleteUser, getAll, getOne} = require('../Controller/userController');
 const {authenticate} = require('../middleware/userAuth');
 

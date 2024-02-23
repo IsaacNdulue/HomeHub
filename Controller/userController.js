@@ -1,5 +1,3 @@
-//userController
-
 const userModel= require('../Model/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -8,7 +6,6 @@ const sendEmail= require('../helper/email')
 const welcomeEmail= require('../wHtml')
 const generateDynamicEmail= require('../html')
 const forgetPassMail= require('../ForgetPass')
-const Joi = require("@hapi/Joi");
 require('dotenv').config()
 
 
