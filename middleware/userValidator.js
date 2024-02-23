@@ -14,7 +14,7 @@ const userValidation = (data) => {
             //   'string.empty': 'Email cannot be empty',
             //   'any.required': 'Email is required',
             // }),
-            email: Joi.string().email(),
+            email: Joi.string().email().required(),
             phoneNumber: Joi.string().required().pattern(/^[0-9]{11}$/).message('Phone number must be exactly 11 digits'),
             // .messages({
             //     'string.empty': 'PhoneNumber cannot be empty',
