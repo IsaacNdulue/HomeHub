@@ -160,7 +160,7 @@ const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new
 
 res.status(200).json({
     message:`user with email:${verifyAgent.email} has been verified successfully`,
-    data:verifyAgent
+ 
 })
 
 

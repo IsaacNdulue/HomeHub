@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 const validation = joi.object({
-    fullName:joi.string().min(3).max(15),
+    fullName:joi.string().min(3).max(50),
     email:joi.string().email().required(),
     // phoneNumber:joi.string().pattern(new RegExp('^[0-9]')).min(5).max(13),
     phoneNumber:joi.string(),
