@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const router = require ('./router/agentRouter')
+const userRouter = require ('./router/userRouter')
 const cors = require('cors')
 require('dotenv').config()
 
@@ -10,6 +11,7 @@ app.use(express.json())
 
 app.use('/uploads', express.static('uploads'));
 app.use('/api', router)
+app.use('/api/user', userRouter)
 
 
 const port = process.env.port

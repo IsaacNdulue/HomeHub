@@ -100,7 +100,7 @@ exports.sponsorPost = async(req,res)=>{
 
     // create a new sponsored post based on the original house details
 
-    const sharedHouse = new house({
+    const sponsorPost = new house({
       type:originalHouse.type,
       location:originalHouse.location,
       description:originalHouse.description,
@@ -112,14 +112,19 @@ exports.sponsorPost = async(req,res)=>{
 
     })
 
-    await sharedHouse.save();
+    await sponsorPost.save();
 
     res.status(201).json({
       message:"House shared and sponsored successfully",
-      data:sharedHouse
+      data:sponsorPost
     });
+    setTimeout(async () => {
+      // Delete the post after a week
+      await houseModel.findByIdAndDelete(sponsorPost._id);
+      console.log(`Sponsored post with ID ${sponsorPost._id} deleted after a week.`);
+    }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
 
-  } catch (error) {
+  }  catch (error) {
     res.status(500).json({
       message:"Error during sponsoring",
       error:error.message
@@ -135,6 +140,12 @@ exports.getAgentSponsoredPost = async(req,res)=>{
       agentId:agent,
       isSponsored:true
     })
+
+    if(agent.isSponsored.length < 1 ){
+      return res.status(403).json({
+        mesage:'You have no sponsored post'
+      })
+    }
     res.status(200).json({
       message:`Sponsored posts for agent ${sponsoredPosts.agentId} ${agent.companyName} within last week`,
       data:sponsoredPosts
@@ -147,29 +158,7 @@ exports.getAgentSponsoredPost = async(req,res)=>{
     })
   }
 }
-const cron = require ('node-cron');
 
-cron.schedule('0 0 * * *', async()=>{
-  try {
-    
-    //find and update houses where isSponsored is true and created more than one week ago
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    await houseModel.updateMany(
-      {
-      isSponsored:true,
-      createdAt:{ $lt: OneWeekAgo},
-    },
-    { $set:{ isSponsored:false}}
-    );
-
-    console.log('Cron job executedsuccessfully.');
-
-  } catch (error) {
-    console.error('Error during cron job:', error.message);
-  }
-})
 
 exports.getOneHouse = async (req,res)=>{
     try{

@@ -4,6 +4,7 @@ const houseModel = require('../Model/houseModel.js')
 const bcrypt = require('bcrypt')
 const sendEmail = require('../helper/email')
 const validation = require('../middleware/validation')
+const forgetPassMail= require('../ForgetPass')
 const cloudinary = require('../Utility/cloudinary.js')
 
 const jwt = require("jsonwebtoken")
@@ -93,13 +94,10 @@ exports.login = async (req,res) => {
     try {
       const {email,password} = req.body;
       const agentExist = await agentModel.findOne({email});
-
-//   console.log(agentExist)
-   
   
       if(!agentExist){
         return res.status(401).json({
-          message:'Invalid agent',
+          message:'Invalid email or passwor',
         });
       }
   
@@ -114,8 +112,6 @@ exports.login = async (req,res) => {
             error: "Incorrect password"
         })
     }
-
-    //   agent.logOut = false
 
     const token = jwt.sign({
         agentId:agentExist._id,
@@ -139,6 +135,8 @@ exports.login = async (req,res) => {
     }
   
   };
+
+
 
   
 exports.verify = async(req,res)=>{
@@ -164,6 +162,11 @@ res.status(200).json({
     message:`user with email:${verifyAgent.email} has been verified successfully`,
     data:verifyAgent
 })
+
+
+//handle your redirection here
+// res.redirect('/api/login')
+
 }catch(err){
    //handle JWT verification errors
     if(err instanceof jwt.TokenExpiredError){
@@ -180,6 +183,85 @@ res.status(200).json({
     })
    
 }
+}
+
+
+exports.agentForgotPassword = async (req,res)=>{
+    try {
+        //get the email of the user
+        const {email} = req.body
+        //find the user data from the database using the email provided
+        const agent = await agentModel.findOne({email});
+        //check if the user exists in our database
+        if (!agent){
+            return res.status(404).json({
+                message:'User not found'
+            })
+        }
+
+        //if a user is found generate a token for user
+        const token = jwt.sign({agentId:agent._id}, process.env.jwtSecret, {expiresIn: '10m'});
+
+        const link = `${req.protocol}://${req.get('host')}/api/AgentResetPassword/${token}`
+        const html = generateDynamicEmail(link,agent.fullName.slice(0, fullName.indexOf(" ")))
+        await forgetPassMail({
+            email: agent.email,
+            subject:"Password reset",
+            html
+        })
+        //send a success response
+        res.status(200).json({
+            message:'Reset password email successfully'
+        })
+    } catch (error) {
+        res.status(500).json({
+          error:  error.messsage
+        })
+    }
+}
+
+
+exports.AgentResetPassword = async (req, res)=> {
+    try {
+    // get the token from the params
+    const {token} = req.params;
+    //get the new password from the body
+    const {newPassword, confirmPassword} = req.body;
+        //verify the validity of the token
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                message: "Password does not match"
+            })
+        }
+
+    const decodedToken = jwt.verify(token, process.env.jwtSecret)
+
+     //find the agent of the token by the id
+     const agentExist = await agentModel.findById(decodedToken.agentId)
+     if (!agentExist) {
+         return res.status(404).json({
+             message: " Agent not found "
+ 
+         })
+     }
+    //  console.log(user);
+    //encrypt the users new password
+    const salt = bcrypt.genSaltSync(12)
+    const hash = bcrypt.hashSync(newPassword, salt)
+
+        //update the agnet password in the database
+        agentExist.password = hash;
+
+        //save the changes to the database
+    await agentExist.save()
+
+     //send a success response
+     res.status(200).json({
+        message: "Password reset successfully"
+    })
+  }catch (error) {
+        res.status(500).json(error.message)
+    }
 }
 
 exports.MakeAdmin = async (req,res)=>{
@@ -552,6 +634,7 @@ exports.logOut= async (req,res)=>{
   
       agent.blackList.push(token)
       await agent.save()
+    // agent.token=null
   
       console.log(agent)
         res.status(200).json({

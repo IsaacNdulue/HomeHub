@@ -1,5 +1,5 @@
 const express = require('express')
-const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,verify, getAgentHouses } = require('../Controller/agentController')
+const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,agentForgotPassword,AgentResetPassword,verify, getAgentHouses } = require('../Controller/agentController')
 const { postHouse,sponsorPost, updateHouse, getOneHouse,editHouse, getAllHouse,getAgentSponsoredPost, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
 const authenticate = require('../middleware/authenticate')
@@ -18,6 +18,8 @@ router.post('/signup', upload.fields([
 router.post('/login', login)
 //verify
 router.get('/verify/:id', verify )
+
+
 // get all agent
 router.get('/getallagent', getAllAgent)
 //get one agent
@@ -70,6 +72,10 @@ router.get('/getallhouse',getAllHouse)
 router.delete('/deletehouse/:id', deleteOneHouse)
 
 router.delete('/deleteAllHouses', deleteAllHouses)
+//forgot password
+router.post('/forgotpassword', agentForgotPassword)
+//reset password
+router.post('/AgentResetPassword/:token', AgentResetPassword)
 
 router.get('/gethousebycate/:categoryId', getHousebyCate)
 router.post('/logout', logOut)

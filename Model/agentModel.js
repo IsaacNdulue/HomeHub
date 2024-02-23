@@ -53,10 +53,7 @@ category:{
    type:mongoose.SchemaTypes.ObjectId,
    ref:'category'
 },
-  blackList:{
-   type:[],
-   default: String
-}
+  token:String
 
 },{timestamps:true})
 

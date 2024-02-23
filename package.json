@@ -11,6 +11,7 @@
   "author": "Isaac Ndulue",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.0.1",
     "cors": "^2.8.5",
