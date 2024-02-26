@@ -184,15 +184,15 @@ res.redirect(`https://homehub-ten.vercel.app/agentlogin`);
 
 }catch(err){
    //handle JWT verification errors
-    if(err instanceof jwt.TokenExpiredError){
-        return res.status(401).json({
-            error:'Token expired'
-        });
-    }else if(err instanceof jwt.JsonWebTokenError){
-        return res.status(401).json({
-            error:'Invalid token'
-        })
-    }
+    // if(err instanceof jwt.TokenExpiredError){
+    //     return res.status(401).json({
+    //         error:'Token expired'
+    //     });
+    // }else if(err instanceof jwt.JsonWebTokenError){
+    //     return res.status(401).json({
+    //         error:'Invalid token'
+    //     })
+    // }
     res.status(500).json({
         error:err.message
     })
