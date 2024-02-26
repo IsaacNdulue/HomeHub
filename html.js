@@ -64,7 +64,7 @@ const generateDynamicEmail=( link,firstName)=> {
                       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
                           <td style="text-align: left; padding-right: 10px;">
-                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">About</h3>
+                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;"></h3>
                              
                           </td>
                         </tr>
@@ -87,7 +87,7 @@ const generateDynamicEmail=( link,firstName)=> {
                       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
                           <td style="text-align: left; padding-left: 10px;">
-                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Useful Links</h3>
+                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;"></h3>
                            
                           </td>
                         </tr>

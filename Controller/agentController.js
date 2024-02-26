@@ -144,13 +144,8 @@ exports.verify = async(req,res)=>{
 
 const id = req.params.id
 const token=req.params.token
-// const agent= await agentModel.findById(id)
+const agent= await agentModel
 
-//  const decoded = await jwt.verify(token,(err,result)=>{
-//     if(err){
-
-//     }
-//  },process.env.jwtSecret)
 
 // //getting my agent's id from the token
 //check if the decoded token contains the expected agent's ID
@@ -159,7 +154,8 @@ if (!id){
         error:'agent not found'
     })
 }
-await jwt.verify(token,async(error,value)=>{
+// console.log(token)
+await jwt.verify(token, process.env.jwtSecret,async(error,value)=>{
     if(error){
         const token = await jwt.sign({
             agentId:agent._id,
@@ -174,13 +170,15 @@ await jwt.verify(token,async(error,value)=>{
             subject,
             html
         });
+    }else{
+        return value
     }
 })
-
+console.log("email")
 const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new:true})
-
-res.status(200).json({
-    message:`user with email:${verifyAgent.email} has been verified successfully`,
+console.log(verifyAgent)
+return res.status(200).json({
+     message:`user with email:${verifyAgent.email} has been verified successfully`,
  
 })
 //handle your redirection here
@@ -651,7 +649,8 @@ exports.logOut= async (req,res)=>{
               error: "Agent not found"
           })
       }
-  
+      agent.token = null;
+
       agent.blackList.push(token)
       await agent.save()
     // agent.token=null
