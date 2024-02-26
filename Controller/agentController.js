@@ -146,7 +146,7 @@ const id = req.params.id
 const token=req.params.token
 // const agent= await agentModel.findById(id)
 
- const decoded = jwt.verify(token,process.env.jwtSecret)
+ const decoded = await jwt.verify(token,process.env.jwtSecret)
 
 // //getting my agent's id from the token
 //check if the decoded token contains the expected agent's ID
