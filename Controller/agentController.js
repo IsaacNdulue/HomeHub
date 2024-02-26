@@ -141,10 +141,9 @@ exports.login = async (req,res) => {
   
 exports.verify = async(req,res)=>{
     try{
-// const id = req.params.id
-const id = req.params.id
 
- 
+const id = req.params.id
+const token = req.params.token
 // const decoded = jwt.verify(agentToken,process.env.jwtSecret)
 
 // //getting my agent's id from the token
@@ -155,6 +154,23 @@ if (!id){
         error:'agent not found'
     })
 }
+await jwt.verify(token,()=>{
+    if(error){
+        const token = jwt.sign({
+            agentId:agent._id,
+            email:agent.email
+        }, process.env.jwtSecret, {expiresIn:'5m'})
+        
+        const subject = 'Verify your account again';
+        const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}`;
+        const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
+         sendEmail({
+            email: agent.email,
+            subject,
+            html
+        });
+    }
+})
 
 const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new:true})
 
@@ -162,10 +178,9 @@ res.status(200).json({
     message:`user with email:${verifyAgent.email} has been verified successfully`,
  
 })
-
-
 //handle your redirection here
-// res.redirect('/api/login')
+res.redirect(`https://homehub-ten.vercel.app/agentlogin`);
+
 
 }catch(err){
    //handle JWT verification errors
