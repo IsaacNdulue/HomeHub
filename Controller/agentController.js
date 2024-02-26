@@ -146,7 +146,11 @@ const id = req.params.id
 const token=req.params.token
 // const agent= await agentModel.findById(id)
 
- const decoded = await jwt.verify(token,process.env.jwtSecret)
+//  const decoded = await jwt.verify(token,(err,result)=>{
+//     if(err){
+
+//     }
+//  },process.env.jwtSecret)
 
 // //getting my agent's id from the token
 //check if the decoded token contains the expected agent's ID
@@ -630,7 +634,7 @@ exports.logOut= async (req,res)=>{
       }
   
       const token = hasAuthorization.split(" ")[1]
-      console.log(token)
+    //   console.log(token)
       if(!token){
           return res.status(400).json({
               error: "Authorization not found"
