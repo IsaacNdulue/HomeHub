@@ -17,7 +17,7 @@ router.post('/signup', upload.fields([
 //login
 router.post('/login', login)
 //verify
-router.get('/verify/:id/token', verify )
+router.get('/verify/:id/:token', verify )
 
 
 // get all agent
