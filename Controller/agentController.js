@@ -66,7 +66,7 @@ exports.signUp = async(req,res)=>{
           // Sending a verification email to the agent
 
           const subject = 'Kindly verify your account';
-          const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}`;
+          const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}/${token}`;
           const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
           await sendEmail({
               email: agent.email,
@@ -143,11 +143,12 @@ exports.verify = async(req,res)=>{
     try{
 
 const id = req.params.id
-const token = req.params.token
-// const decoded = jwt.verify(agentToken,process.env.jwtSecret)
+const token=req.params.token
+// const agent= await agentModel.findById(id)
+
+ const decoded = jwt.verify(token,process.env.jwtSecret)
 
 // //getting my agent's id from the token
-// const id = decoded.agentId;
 //check if the decoded token contains the expected agent's ID
 if (!id){
     return res.status(404).json({
