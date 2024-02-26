@@ -159,9 +159,9 @@ if (!id){
         error:'agent not found'
     })
 }
-await jwt.verify(token,()=>{
+await jwt.verify(token,async(error,value)=>{
     if(error){
-        const token = jwt.sign({
+        const token = await jwt.sign({
             agentId:agent._id,
             email:agent.email
         }, process.env.jwtSecret, {expiresIn:'5m'})
