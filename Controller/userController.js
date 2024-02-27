@@ -359,38 +359,39 @@ const favoriteProperty = async(req, res)=>{
       
     }
   }
+
  
-//   const removeFavorite = async(req, res)=>{
-//     try {
-//       const postId = req.params.postId
-//       const userId = req.user.userId
-// //Find the post ID
-// const post = await postModel.findById(postId)
-// if(!post){
-// return res.status(400).json('Post not Found')
-// }
-// //Find the user
-// const checkUser = await blogModel.findById(userId)
-// if(!checkUser){
-// return res.status(404).json('User not Found')
-// }
-// // Check if the post is in the user's favorites
-// const postIndex = checkUser.favorite.indexOf(postId);
-// if (postIndex === -1) {
-//    return res.status(400).json('Post is not in favorites');
-// }else{
-//      // Remove the post from the user's favorites
-// checkUser.favorite.splice(postIndex, 1);
-// await checkUser.save();
-// return res.status(200).json({message: 'Post removed from favorites successfully', checkUser})
+  const removeFavorite = async(req, res)=>{
+    try {
+      const postId = req.params.postId
+      const userId = req.user.userId
+//Find the post ID
+   const post = await houseModel.findById(postId)
+   if(!post){
+   return res.status(400).json('Post not Found')
+}
+  //Find the user
+  const checkUser = await userModel.findById(userId)  
+   if(!checkUser){
+   return res.status(404).json('User not Found')
+}
+  // Check if the post is in the user's favorites
+   const postIndex = checkUser.favorite.indexOf(postId);
+  if (postIndex === -1) {
+   return res.status(400).json('Post is not in favorites');
+}else{
+     // Remove the post from the user's favorites
+  checkUser.favorite.splice(postIndex, 1);
+  await checkUser.save();
+  return res.status(200).json({message: 'Post removed from favorites successfully', checkUser})
 
-// }
+}
 
-//     } catch (error) {
-//       return res.status(500).json({error: error.message})
+    } catch (error) {
+      return res.status(500).json({error: error.message})
       
-//     }
-//   }
+    }
+  }
 
 //User can delete their account
 const deleteUser = async (req, res) => {
@@ -399,7 +400,7 @@ const deleteUser = async (req, res) => {
         const id = req.params.id;
         console.log(id)
         //track user with the id gotten
-        const checkUser = await User.findById(id); 
+        const checkUser = await userModel.findById(id); 
         console.log(checkUser)
         // check for error
         if (!checkUser) {
@@ -425,7 +426,7 @@ const logOut = async (req, res) => {
         const userId = req.user.userId
 
         // Find the user by username
-        const user = await User.findById(userId);
+        const user = await userModel.findById(userId);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -445,5 +446,5 @@ const logOut = async (req, res) => {
     }
 }
 
-module.exports = {signUp, verify, logIn, update, favoriteProperty, deleteUser, 
+module.exports = {signUp, verify, logIn, update, favoriteProperty,removeFavorite, deleteUser, 
                     forgotPassword, resetPassword, getAll, getOne, logOut}

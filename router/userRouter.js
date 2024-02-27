@@ -1,5 +1,5 @@
 const express = require('express');
-const {signUp, verify, logIn, update, favoriteProperty,forgotPassword, resetPassword, logOut, deleteUser, getAll, getOne} = require('../Controller/userController');
+const {signUp, verify, logIn, update, favoriteProperty, removeFavorite, forgotPassword, resetPassword, logOut, deleteUser, getAll, getOne} = require('../Controller/userController');
 const {authenticate} = require('../middleware/userAuth');
 
 const router = express.Router()
@@ -12,7 +12,10 @@ router.post('/login', logIn);
 //endpoint to Update User details
 router.put('/update/:id', authenticate, update);
 //add to favorite
-router.put('/favoriteProperty/:postId',favoriteProperty)
+router.put('/favoriteProperty/:postId',authenticate, favoriteProperty)
+//remove From Favourite 
+router.post("/removeFavorite/:postId", authenticate, removeFavorite)
+
 //endpoint to get all Users
 router.get('/getone/:id', getOne)
 //endpoint to get all Users
