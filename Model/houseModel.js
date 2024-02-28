@@ -8,13 +8,13 @@ const houseModel = new mongoose.Schema({
     type:String
  },
  images:{
-    type:[String]
+    type:Array
  },
  amount:{
     type:String
  },
  description:{
-    type:Array,
+    type:String,
     required:true
  },
  timestamp:{

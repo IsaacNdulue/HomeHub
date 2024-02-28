@@ -109,7 +109,7 @@ exports.sponsorPost = async(req,res)=>{
       agentId:originalHouse.agentId,
       agent:agent.companyName,
       images:originalHouse.images
-
+      
     })
 
     await sponsorPost.save();
@@ -139,15 +139,15 @@ exports.getAgentSponsoredPost = async(req,res)=>{
     const sponsoredPosts = await houseModel.find({
       agentId:agent,
       isSponsored:true
-    })
+    }).populate('agentId', 'companyName');
 
-    if(agent.isSponsored.length < 1 ){
+    if(sponsoredPosts.length < 1 ){
       return res.status(403).json({
         mesage:'You have no sponsored post'
       })
     }
     res.status(200).json({
-      message:`Sponsored posts for agent ${sponsoredPosts.agentId} ${agent.companyName} within last week`,
+      message:`Sponsored posts for agent ${sponsoredPosts.agentId} within last week`,
       data:sponsoredPosts
     })
 
