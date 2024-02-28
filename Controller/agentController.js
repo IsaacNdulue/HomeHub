@@ -348,13 +348,13 @@ exports.getAllAgent = async(req,res)=>{
         //check if there is an agent
         if(!agent){
             return res.status(404).json({
-                error: "no agent found"
+                error: "No agent found"
             })
         }
 
         //show the users active
         res.status(200).json({
-            messsage: `you have ${agent.length} agent'(s) and here they are`,
+            messsage: `You have ${agent.length} agent'(s) and here they are`,
             data:agent
         })
 

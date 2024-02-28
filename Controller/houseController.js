@@ -160,6 +160,29 @@ exports.getAgentSponsoredPost = async(req,res)=>{
 }
 
 
+exports.allSponsoredPost = async (req, res) => {
+  try {
+      // Find all posts where isSponsored is true
+      const sponsoredPosts = await propertyModel.find({ isSponsored: true });
+
+      if (sponsoredPosts.length > 0) {
+          return res.status(200).json({
+              message: `There are ${sponsoredPosts.length} sponsored posts`,
+              data: sponsoredPosts
+          });
+      } else {
+          return res.status(404).json({
+              message: 'No sponsored posts found'
+          });
+      }
+  } catch (error) {
+      return res.status(500).json({
+          error: error.message
+      });
+  }
+}
+
+
 exports.getOneHouse = async (req,res)=>{
     try{
       const id = req.params.id
