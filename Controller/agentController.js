@@ -154,6 +154,9 @@ if (!id){
         error:'agent not found'
     })
 }
+if (agent.isVerified == true){
+    res.redirect(`https://homehub-ten.vercel.app/agentlogin`);
+}
 // console.log(token)
 await jwt.verify(token, process.env.jwtSecret,async(error,value)=>{
     if(error){
