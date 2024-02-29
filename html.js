@@ -13,8 +13,8 @@ const generateDynamicEmail=( link,firstName)=> {
         <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
         <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f1f1f1;">
-        <center style="width: 100%; background-color: #f1f1f1;">
+    <body style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #B7C9F2;">
+        <center style="width: 100%; background-color: #B7C9F2;">
         <div style="display: none; font-size: 1px;max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
             &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
         </div>
@@ -45,7 +45,7 @@ const generateDynamicEmail=( link,firstName)=> {
                             <div style="padding: 0 2.5em; text-align: center;">
                                 <h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 40px; margin-bottom: 0; font-weight: 400;">Please verify your email</h2>
                                 <h3 style="font-family: 'Lato', sans-serif; font-size: 24px; font-weight: 300;">Welcome On Board , ${firstName},<br/>Click the button below to verify your account.</h3>
-                                <p><a href=${link} class="btn btn-primary" style="padding: 15px 35px; display: inline-block; border-radius: 3px; background: #7e2e00; color: #ffffff; text-decoration: none;">Verify</a></p>
+                                <p><a href=${link} class="btn btn-primary" style="padding: 15px 35px; display: inline-block; border-radius: 3px; background:#B7C9F2 ; color: #00000; text-decoration: none;">Verify</a></p>
                                 <h6 style="font-family: 'Lato', sans-serif; font-size: 18px; font-weight: 300;">This email expires in 5minutes</h6>
                             </div>
                         </td>
@@ -76,7 +76,7 @@ const generateDynamicEmail=( link,firstName)=> {
                           <td style="text-align: left; padding-left: 5px; padding-right: 5px;">
                               <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Contact Info</h3>
                               <ul>
-                                        <li><span style="color: rgba(0,0,0,.5);">161/163 Muyibi street,Olodi Apapa</span></li>
+                                        <li><span style="color: rgba(0,0,0,.5);">180 Freedom Way, Eti-Osa, Lekki 101502, Lagos</span></li>
                                         <li><span style="color: rgba(0,0,0,.5);">081372586756</span></li>
                                       </ul>
                           </td>
@@ -98,8 +98,8 @@ const generateDynamicEmail=( link,firstName)=> {
               </td>
             </tr><!-- end: tr -->
             <tr>
-              <td style="text-align: center; background-color: #fafafa;">
-                  © Copyright 2023. All rights reserved.<br/>
+              <td style="text-align: center; background-color:#00000;">
+                  © Copyright 2024. All rights reserved.<br/>
               </td>
             </tr>
           </table>

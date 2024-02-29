@@ -8,8 +8,10 @@ const houseModel = new mongoose.Schema({
     type:String
  },
  images:{
-    type:Array
+    type:Array,
+    required:true
  },
+
  amount:{
     type:String
  },

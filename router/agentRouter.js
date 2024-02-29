@@ -49,7 +49,9 @@ router.get('/MakeAdmin', MakeAdmin)
 router.put('/updateIsGood/:id', updateIsGood)
 
 //post a house
-router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
+// router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
+router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
+  
 
 //sponsor a post
 router.put('/sponsorPost/:houseId', sponsorPost)
@@ -65,7 +67,7 @@ router.delete('/deleteSponsoredHouse/:sponsoredId', deleteSponsoredHouse)
 
 
 // Agent editing their house
-router.patch('/house/edit/:houseId', upload.array('images'), editHouse);
+router.patch('/house/edit/:houseId',authorization, upload.array('images'), editHouse);
 
 
 router.get('/gethouse/:id', getOneHouse)
