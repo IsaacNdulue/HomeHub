@@ -38,13 +38,14 @@ exports.signUp = async(req,res)=>{
           })
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
+        
         const documentImageFile = req.files['documentImage'][0].path
         const documentImageResult = await cloudinary.uploader.upload(documentImageFile)
-        // const file = req.files.regCert
+ 
 
         const regCertFile = req.files['regCert'][0].path
         const regCertResult = await cloudinary.uploader.upload(regCertFile)
-        // const result = await cloudinary.uploader.upload(files.path)
+
         const agent = await agentModel.create({
             companyName,
             fullName,
@@ -62,12 +63,12 @@ exports.signUp = async(req,res)=>{
         }, process.env.jwtSecret, {expiresIn:'5m'})
         
         await agent.save()
-
+        // .toUpperCase().slice(0, fullName.indexOf(" "))
           // Sending a verification email to the agent
 
           const subject = 'Kindly verify your account';
           const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}/${token}`;
-          const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
+          const html = generateDynamicEmail(link, agent.companyName);
           await sendEmail({
               email: agent.email,
               subject,
@@ -97,7 +98,7 @@ exports.login = async (req,res) => {
   
       if(!agentExist){
         return res.status(401).json({
-          message:'Invalid email or passwor',
+          message:'Invalid email or password',
         });
       }
   
@@ -116,7 +117,7 @@ exports.login = async (req,res) => {
     const token = jwt.sign({
         agentId:agentExist._id,
         email:agentExist.email
-    }, process.env.jwtSecret, {expiresIn:'1d'})
+    }, process.env.jwtSecret, {expiresIn:"30d"})
     
 
     await agentExist.save()
@@ -147,7 +148,6 @@ const token=req.params.token
 const agent= await agentModel
 
 
-// //getting my agent's id from the token
 //check if the decoded token contains the expected agent's ID
 if (!id){
     return res.status(404).json({
@@ -167,7 +167,7 @@ await jwt.verify(token, process.env.jwtSecret,async(error,value)=>{
         
         const subject = 'Verify your account again';
         const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}`;
-        const html = generateDynamicEmail(link, agent.fullName.toUpperCase().slice(0, fullName.indexOf(" ")));
+        const html = generateDynamicEmail(link, agent.companyName);
          sendEmail({
             email: agent.email,
             subject,

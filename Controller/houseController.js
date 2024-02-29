@@ -6,131 +6,264 @@ const cloudinary = require('../Utility/cloudinary.js')
 const jwt = require("jsonwebtoken")
 
 
-exports.postHouse = async (req,res)=>{
+
+// exports.postHouse = async (req, res) => {
+//   try {
+//     const { type, location, description, amount, categoryId } = req.body;
+    
+//     // Extract agent's info from the token
+//     const agentToken = req.headers.authorization.split(" ")[1];
+//     const decoded = jwt.verify(agentToken, process.env.jwtSecret);
+//     const agentId = decoded.agentId;
+
+//     // Finding the agent using the extracted agentId
+//     const agent = await agentModel.findById(agentId);
+    
+//     if (!agent) {
+//       return res.status(400).json({ message: 'You are not logged in' });
+//     }
+
+//     if (!agent.isVerified) {
+//       return res.status(400).json({
+//         message: `Can't post. Please verify your account via link sent to ${agent.email}`
+//       });
+//     }
+
+//     // Fetching the category based on the provided categoryId
+//     const category = await cateModel.findById(categoryId);
+
+//     if (!category) {
+//       return res.status(400).json({ message: 'Category does not exist' });
+//     }
+
+//     // Upload images to Cloudinary
+//     const uploadedImages = [];
+//     const imageKeys = ['imageA', 'imageB', 'imageC', 'imageD', 'imageE', 'imageF'];
+
+//     for (const key of imageKeys) {
+//       if (req.files[key]) {
+//         const imageFile = req.files[key][0].path;
+//         const imageFileResult = await cloudinary.uploader.upload(imageFile);
+//         uploadedImages.push(imageFileResult.secure_url);
+//       }
+//     }
+
+//     // Create house document
+//     const house = await houseModel.create({
+//       type,
+//       location,
+//       amount,
+//       description,
+//       categoryId,
+//       agentId: agent._id,
+//       companyName: agent.companyName,
+//       ...Object.fromEntries(uploadedImages.map((url, index) => [`image${String.fromCharCode(65 + index)}`, url]))
+//     });
+
+//     // Update category and house documents
+//     category.house.push(house._id);
+//     house.category = categoryId;
+
+//     await Promise.all([category.save(), house.save()]);
+
+//     res.status(201).json({
+//       message: 'House posted successfully',
+//       data: house
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Internal Server Error', error: error.message });
+//   }
+// };
+
+
+exports.postHouse = async (req, res) => {
   try {
-    //  const id = req.params.categoryId;
-    const {type, location,description,amount,categoryId} = req.body;
-   
-    //Extrac\t agents's info from the token
+    const { type, location, description, amount, categoryId } = req.body;
+
+    // Extract agent's info from the token
     const agentToken = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(agentToken, process.env.jwtSecret);
-    const agentId = decoded.agentId
-    //finding the agent using the extracted agentId
+    const agentId = decoded.agentId;
+
+    // Finding the agent using the extracted agentId
     const agent = await agentModel.findById(agentId);
 
-    
-    // const agent = await agentModel.findById()
-    
-    if(!agent){
+    if (!agent) {
+      return res.status(400).json({ message: 'You are not logged in' });
+    }
+
+    if (!agent.isVerified) {
       return res.status(400).json({
-        message:'You are not logged in'
+        message: `Can't post. Please verify your account via link sent to ${agent.email}`
       });
     }
-    if(!agent.isVerified){
-      return res.status(400).json({
-        message:`Can't post Please verify your account via link sent to ${agent.email}`
+
+    const category = await cateModel.findById(categoryId);
+
+    if (!category) {
+      return res.status(400).json({ message: 'Category does not exist' });
+    }
+
+    // Upload images to Cloudinary
+    const uploadedImages = await Promise.all(
+      req.files.map(async (file) => {
+        
+        const result = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' });
+        return result.secure_url;
       })
+    );
+
+    if (uploadedImages.length === 0) {
+      return res.status(400).json({ message: 'Please upload at least one image' });
     }
-    // if(agent.isGood === false){
-    //   return res.status(400).json({
-    //     message:`Can't post, your account is under review`
-    //   })
-    // }
-    const category = await cateModel.findById(categoryId)
 
 
-    if(!category){
-      return res.status(400).json({
-        message:'Category does not exist'
-      });
-    }
-    // const file = req.file.Images.path
-    // const result = await cloudinary.uploader.upload(file)
-const uploadedImages = await Promise.all(
-  req.files.map(async (file)=>{
-    const result = await cloudinary.uploader.upload(file.path, {resource_type:'auto'})
-    return result.secure_url;
-  })
-)
     const house = await houseModel.create({
       type,
       location,
-      images:uploadedImages,
       amount,
       description,
       categoryId,
       agentId: agent._id,
-      companyName:agent.companyName
-
-       
+      companyName: agent.companyName,
+      images: uploadedImages
     });
-   
 
     category.house.push(house._id);
-    house.category = categoryId
+    house.category = categoryId;
 
-
-    await category.save()
-    await house.save();
+    await Promise.all([category.save(), house.save()]);
 
     res.status(201).json({
-      message:'House posted successfully',
-      data:house
-    })
+      message: 'House posted successfully',
+      data: house
+    });
   } catch (error) {
     res.status(500).json({
-      message:'internal Server Error',
-      message: error.message
-    })
+      message: 'Internal Server Error',
+      error: error.message
+    });
   }
-}
+};
 
-exports.sponsorPost = async(req,res)=>{
+
+
+
+const schedule = require('node-schedule');
+
+exports.sponsorPost = async (req, res) => {
   try {
     const houseId = req.params.houseId;
-    //get the original house from database
-    const originalHouse = await houseModel.findById(houseId)
-    const agent = await agentModel.find()
-
-    if(!originalHouse){
+    const token = req.params.token;
+    // Get the original house from the database
+    const originalHouse = await houseModel.findById(houseId);
+    
+    if (!originalHouse) {
       return res.status(404).json({
-        message:"Original house not found",
+        message: "House not found",
       });
     }
+    
+    // Update the isSponsored field to true
+    const updatedHouse = await houseModel.findByIdAndUpdate(houseId, { isSponsored: true }, { new: true });
 
-    // create a new sponsored post based on the original house details
-
-    const sponsorPost = new house({
-      type:originalHouse.type,
-      location:originalHouse.location,
-      description:originalHouse.description,
-      amount:originalHouse.amount,
-      isSponsored:true,
-      agentId:originalHouse.agentId,
-      agent:agent.companyName,
-      images:originalHouse.images
-      
-    })
-
-    await sponsorPost.save();
+    // Schedule to remove sponsorship after a week
+    const job = schedule.scheduleJob(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), async function() {
+      await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
+      console.log(`Sponsored house with ID ${houseId} removed from sponsored after a week.`);
+    });
 
     res.status(201).json({
-      message:"House shared and sponsored successfully",
-      data:sponsorPost
+      message: "House sponsored successfully",
+      data: updatedHouse, 
     });
-    setTimeout(async () => {
-      // Delete the post after a week
-      await houseModel.findByIdAndDelete(sponsorPost._id);
-      console.log(`Sponsored post with ID ${sponsorPost._id} deleted after a week.`);
-    }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
-
-  }  catch (error) {
+  } catch (error) {
     res.status(500).json({
-      message:"Error during sponsoring",
-      error:error.message
-    })
+      message: "Error during sponsoring",
+      error: error.message
+    });
   }
 }
+
+
+// exports.sponsorPost = async(req,res)=>{
+//   try {
+//     const houseId = req.params.houseId;
+//     const token = req.params.token;
+//     //get the original house from database
+//     const originalHouse = await houseModel.findById(houseId)
+ 
+    
+//     if(!originalHouse){
+//       return res.status(404).json({
+//         message:"House not found",
+//       });
+//     }
+//     const updatedHouse = await houseModel.findByIdAndUpdate(houseId,{isSponsored:true},{new:true})
+
+//     res.status(201).json({
+//       message:"House sponsored successfully",
+//       data:updatedHouse
+//     });
+//     setTimeout(async () => {
+//       // Delete the post after a week
+//       await houseModel.findByIdAndUpdate(houseId,{isSponsored:false});
+//       console.log(`Sponsored house with ID ${houseId} removed from sponsored after a week.`);
+//     }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+
+//   }  catch (error) {
+//     res.status(500).json({
+//       message:"Error during sponsoring",
+//       error:error.message
+//     })
+//   }
+// }
+// exports.sponsorPost = async(req,res)=>{
+//   try {
+//     const houseId = req.params.houseId;
+//     //get the original house from database
+//     const originalHouse = await houseModel.findById(houseId)
+//     const agent = await agentModel.find()
+
+//     if(!originalHouse){
+//       return res.status(404).json({
+//         message:"Original house not found",
+//       });
+//     }
+
+//     // create a new sponsored post based on the original house details
+
+//     const sponsorPost = new house({
+//       type:originalHouse.type,
+//       location:originalHouse.location,
+//       description:originalHouse.description,
+//       amount:originalHouse.amount,
+//       isSponsored:true,
+//       agentId:originalHouse.agentId,
+//       agent:agent.companyName,
+//       images:originalHouse.images
+      
+//     })
+
+//     await sponsorPost.save();
+
+//     res.status(201).json({
+//       message:"House shared and sponsored successfully",
+//       data:sponsorPost
+//     });
+//     setTimeout(async () => {
+//       // Delete the post after a week
+//       await houseModel.findByIdAndDelete(sponsorPost._id);
+//       console.log(`Sponsored post with ID ${sponsorPost._id} deleted after a week.`);
+//     }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+
+//   }  catch (error) {
+//     res.status(500).json({
+//       message:"Error during sponsoring",
+//       error:error.message
+//     })
+//   }
+// }
 
 exports.getAgentSponsoredPost = async(req,res)=>{
   try{
@@ -163,7 +296,7 @@ exports.getAgentSponsoredPost = async(req,res)=>{
 exports.allSponsoredPost = async (req, res) => {
   try {
       // Find all posts where isSponsored is true
-      const sponsoredPosts = await propertyModel.find({ isSponsored: true });
+      const sponsoredPosts = await houseModel.find({ isSponsored: true });
 
       if (sponsoredPosts.length > 0) {
           return res.status(200).json({
@@ -210,6 +343,7 @@ exports.getOneHouse = async (req,res)=>{
 }
 
 // exports.updateHouse = async (req,res)=>{
+
 //     try{
 //       const id = req.params.id
 //       const {type,amount,location,desc,Images}= req.body
@@ -240,20 +374,29 @@ exports.getOneHouse = async (req,res)=>{
 // const storage = multer.memoryStorage();
 // const upload = multer({ storage: storage });
 
+
+
 // Edit House Function
 exports.editHouse = async (req, res) => {
   try {
     const houseId = req.params.houseId;
+    const agentId = req.agent.agentId;
     const { type, location, description, amount } = req.body;
 
     // Fetch the house to edit
     const house = await houseModel.findById(houseId);
 
     // Check if the house exists and the agent is the owner
-    if (!house || house.agentId !== req.headers._agentId) {
+    if (!house) {
       return res.status(400).json({
-        message: "House not found or you don't have permission to edit",
-        error: "Not Found",
+        message: "House not found ",
+        error: error.message
+      });
+    }
+    if (house.agentId !== agentId) {
+      return res.status(400).json({
+        message: "You don't have permission to edit",
+        error: error.message
       });
     }
 
@@ -291,7 +434,7 @@ exports.editHouse = async (req, res) => {
 
 
 
-// Export the router
+
 
 // exports.editHouse = async (req, res) => {
 //   try {
