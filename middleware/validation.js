@@ -2,7 +2,10 @@ const joi = require('joi')
 
 const validation = joi.object({
     fullName:joi.string().min(3).max(50),
-    email:joi.string().email().required(),
+    email: joi.string().email({ tlds: { allow: false } }).required().trim().messages({
+              'string.empty': 'Email cannot be empty',
+              'any.required': 'Email is required',
+            }),
     phoneNumber: joi.string()
     .required()
     .pattern(/^[0-9]{11}$/)

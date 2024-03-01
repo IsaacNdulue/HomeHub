@@ -216,23 +216,23 @@ exports.agentForgotPassword = async (req,res)=>{
         //check if the user exists in our database
         if (!agent){
             return res.status(404).json({
-                message:'User not found'
+                message:'Agent not found'
             })
-        }
-
+        };
+         const name = agent.fullName.split(' ')[0]
         //if a user is found generate a token for user
         const token = jwt.sign({agentId:agent._id}, process.env.jwtSecret, {expiresIn: '10m'});
 
         const link = `${req.protocol}://${req.get('host')}/api/AgentResetPassword/${token}`
-        const html = generateDynamicEmail(link,agent.fullName.slice(0, fullName.indexOf(" ")))
-        await forgetPassMail({
+        const html = forgetPassMail(link,name)
+        await sendEmail({
             email: agent.email,
             subject:"Password reset",
             html
         })
         //send a success response
         res.status(200).json({
-            message:'Reset password email successfully'
+            message:'Reset password email sent'
         })
     } catch (error) {
         res.status(500).json({
