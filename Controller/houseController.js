@@ -125,7 +125,7 @@ exports.postHouse = async (req, res) => {
       description,
       categoryId,
       agentId: agent._id,
-      companyName: agent.companyName,
+      companyName: agent.companyName ,
       images: uploadedImages
     });
 
@@ -315,6 +315,44 @@ exports.allSponsoredPost = async (req, res) => {
   }
 }
 
+exports.deleteSponsoredHouse = async(req, res)=>{
+  try {
+    const sponsoredId = req.params.id
+    //Extract agents's info from the token
+    const agentToken = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(agentToken, process.env.jwtSecret);
+    const agentId = decoded.agentId
+    //finding the agent using the extracted agentId
+    const agent = await agentModel.findById(agentId);
+    
+    if(!agent){
+      return res.status(400).json({
+        message:'You are not logged in'
+      });
+    }
+    
+    const sponsoredToDelete = await houseModel.findOne({
+      _id: sponsoredId,
+      agentId:agentId,
+      isSponsored: true
+    })
+    if(!sponsoredToDelete){
+      return res.status(404).json({
+        message: 'Sponsored House not found'
+      })
+    }
+
+    await houseModel.findByIdAndDelete(sponsoredId)
+    res.status(200).json({
+      message: 'Sponsored house deleted successfully'
+    })
+    
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message
+    })
+  }
+}
 
 exports.getOneHouse = async (req,res)=>{
     try{
@@ -337,7 +375,7 @@ exports.getOneHouse = async (req,res)=>{
   
     }catch(error){
       res.status(500).json({
-        message:error.message
+        message:error.message 
       })
     }  
 }

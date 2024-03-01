@@ -1,6 +1,6 @@
 const express = require('express')
 const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,agentForgotPassword,AgentResetPassword,verify, getAgentHouses } = require('../Controller/agentController')
-const { postHouse,sponsorPost, updateHouse, getOneHouse,editHouse, getAllHouse,getAgentSponsoredPost, allSponsoredPost, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
+const { postHouse, sponsorPost, updateHouse, getOneHouse, editHouse, getAllHouse, getAgentSponsoredPost, allSponsoredPost, deleteSponsoredHouse, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
 const authenticate = require('../middleware/authenticate')
 const authorization = require('../middleware/authorization')
@@ -59,7 +59,8 @@ router.put('/sponsorPost/:houseId', sponsorPost)
 router.get('/getSponsored/:id', getAgentSponsoredPost)
 //get all Sponsored post
 router.get('/allSponsored', allSponsoredPost)
-
+//delete a sponsored house
+router.delete('/deleteSponsoredHouse/:sponsoredId', deleteSponsoredHouse)
 
 // router.put('/editpost/:id', updateHouse)
 // router.put('/editHouse/:houseId', editHouse)
