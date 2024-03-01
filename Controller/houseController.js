@@ -280,7 +280,7 @@ exports.getAgentSponsoredPost = async(req,res)=>{
       })
     }
     res.status(200).json({
-      message:`Sponsored posts for agent ${sponsoredPosts.agentId} within last week`,
+      message:`Sponsored posts for agent is ${sponsoredPosts.length} within last week`,
       data:sponsoredPosts
     })
 

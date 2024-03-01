@@ -56,7 +56,7 @@ router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
 //sponsor a post
 router.put('/sponsorPost/:houseId', sponsorPost)
 //get an agent sponsored posts
-router.get('/getSponsored/:agentId', getAgentSponsoredPost)
+router.get('/getSponsored/:id', getAgentSponsoredPost)
 //get all Sponsored post
 router.get('/allSponsored', allSponsoredPost)
 
