@@ -15,13 +15,19 @@ exports.signUp = async(req,res)=>{
         const {companyName,fullName,email,phoneNumber,password,confirmPassword,address} = req.body
         // const file = req.files
 
-        const exisitingAgent = await agentModel.findOne({email});
-        if(exisitingAgent){
-            return res.status(400).json({
-                message:'User already exist'
-
-            })
+        const existingAgent = await agentModel.findOne({ $or: [{ companyName }, { email }] });
+        if (existingAgent) {
+            if (existingAgent.companyName === companyName) {
+                return res.status(400).json({
+                    message: `A company with name ${existingAgent.companyName} already exists`
+                });
+            } else {
+                return res.status(400).json({
+                    message: 'Email already exists'
+                });
+            }
         }
+       
         if(confirmPassword !== password){
             return res.status(400).json({
             message:'Password does not match'
