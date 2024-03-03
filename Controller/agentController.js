@@ -123,7 +123,7 @@ exports.login = async (req,res) => {
     const token = jwt.sign({
         agentId:agentExist._id,
         email:agentExist.email
-    }, process.env.jwtSecret, { expiresIn: null })
+    }, process.env.jwtSecret, { expiresIn: "36500d" })
     
 
     await agentExist.save()
