@@ -26,7 +26,7 @@ const generateDynamicEmail=( link,firstName)=> {
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                           <!-- <td style="text-align: center;">
-                            <h1 style="margin: 0;"><a href="#" style="color: #30e3ca; font-size: 24px; font-weight: 700; font-family: 'Lato', sans-serif;">THE CURVE COHORT3</a></h1>
+                            <h1 style="margin: 0;"><a href="#" style="color: #30e3ca; font-size: 24px; font-weight: 700; font-family: 'Lato', sans-serif;"></a></h1>
                           </td> -->
                       </tr>
                   </table>
@@ -77,7 +77,7 @@ const generateDynamicEmail=( link,firstName)=> {
                               <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Our contact Info</h3>
                               <ul>
                                         <li><span style="color: rgba(0,0,0,.5);">180 Freedom Way, Eti-Osa, Lekki 101502, Lagos</span></li>
-                                        <li><span style="color: rgba(0,0,0,.5);">081372586756</span></li>
+                                        <li><span style="color: rgba(0,0,0,.5);">07063775404</span></li>
                                       </ul>
                           </td>
                         </tr>
