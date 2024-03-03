@@ -100,7 +100,7 @@ exports.signUp = async(req,res)=>{
 exports.login = async (req,res) => {
     try {
       const {email,password} = req.body;
-      const agentExist = await agentModel.findOne({email});
+      const agentExist = await agentModel.findOne({email:email.toLowerCase()});
   
       if(!agentExist){
         return res.status(401).json({
