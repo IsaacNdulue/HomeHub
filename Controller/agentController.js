@@ -123,7 +123,7 @@ exports.login = async (req,res) => {
     await agentExist.save()
      
     res.status(200).json({
-    message:'Login succesful',
+    message:'Login successful',
     token,
     agentExist
    })
