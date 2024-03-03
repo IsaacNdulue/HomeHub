@@ -98,6 +98,12 @@ exports.postHouse = async (req, res) => {
       });
     }
 
+    if (agent.isGood === false) {
+      return res.status(400).json({
+        message: `Hi, you can't post now, your document is been reviewed wait for 24hours`
+      });
+    }
+
     const category = await cateModel.findById(categoryId);
 
     if (!category) {

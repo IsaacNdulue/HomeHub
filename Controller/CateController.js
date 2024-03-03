@@ -5,13 +5,12 @@ exports.createCategory = async (req, res) => {
         const { type,  } = req.body;
 
         const category = await cateModel.create({
-            type,
-            
+            type
         })
         console.log('category', category)
         
         res.status(201).json({
-            message: 'category created successfully successfully',
+            message: 'category created successfully',
             data: category 
         })
     } catch(error) {

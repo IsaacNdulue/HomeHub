@@ -25,10 +25,12 @@ const agentSchema = new mongoose.Schema({
         required:true
      },
      documentImage:{
-      type:String
+      type:String,
+      required:true
      },    
      regCert:{
-      type:String
+      type:String,
+      required:true
      },    
      address:{
       type:String

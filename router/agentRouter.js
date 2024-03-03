@@ -80,7 +80,7 @@ router.delete('/deleteAllHouses', deleteAllHouses)
 //forgot password
 router.post('/forgotpassword', agentForgotPassword)
 //reset password
-router.post('/AgentResetPassword/:token', AgentResetPassword)
+router.get('/AgentResetPassword/:token', AgentResetPassword)
 
 router.get('/gethousebycate/:categoryId', getHousebyCate)
 router.post('/logout', logOut)

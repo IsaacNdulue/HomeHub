@@ -117,7 +117,7 @@ exports.login = async (req,res) => {
     const token = jwt.sign({
         agentId:agentExist._id,
         email:agentExist.email
-    }, process.env.jwtSecret, {expiresIn:"30d"})
+    }, process.env.jwtSecret)
     
 
     await agentExist.save()
@@ -212,18 +212,18 @@ exports.agentForgotPassword = async (req,res)=>{
         //get the email of the user
         const {email} = req.body
         //find the user data from the database using the email provided
-        const agent = await agentModel.findOne({email});
+        const agent = await agentModel.findOne({email:email.toLowerCase()});
         //check if the user exists in our database
         if (!agent){
             return res.status(404).json({
                 message:'Agent not found'
             })
         };
-         const name = agent.fullName.split(' ')[0]
+         const name = agent.companyName
         //if a user is found generate a token for user
         const token = jwt.sign({agentId:agent._id}, process.env.jwtSecret, {expiresIn: '10m'});
 
-        const link = `${req.protocol}://${req.get('host')}/api/AgentResetPassword/${token}`
+        const link = `https://homehub-coxc.onrender.com/api/AgentResetPassword/${token}`
         const html = forgetPassMail(link,name)
         await sendEmail({
             email: agent.email,
