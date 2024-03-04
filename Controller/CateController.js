@@ -9,7 +9,7 @@ exports.createCategory = async (req, res) => {
             
         })
         console.log('category', category)
-        
+        await category.save();
         res.status(201).json({
             message: 'category created successfully successfully',
             data: category 
