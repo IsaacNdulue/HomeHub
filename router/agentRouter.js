@@ -56,7 +56,7 @@ router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
 //sponsor a post
 router.put('/sponsorPost/:houseId', sponsorPost)
 //get an agent sponsored posts
-router.get('/getSponsored/:agentId', getAgentSponsoredPost)
+router.get('/getSponsored/:id', getAgentSponsoredPost)
 //get all Sponsored post
 router.get('/allSponsored', allSponsoredPost)
 //delete a sponsored house
@@ -80,7 +80,7 @@ router.delete('/deleteAllHouses', deleteAllHouses)
 //forgot password
 router.post('/forgotpassword', agentForgotPassword)
 //reset password
-router.post('/AgentResetPassword/:token', AgentResetPassword)
+router.get('/AgentResetPassword/:token', AgentResetPassword)
 
 router.get('/gethousebycate/:categoryId', getHousebyCate)
 router.post('/logout', logOut)

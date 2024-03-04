@@ -13,8 +13,8 @@ const forgetPassMail=( link,firstName)=> {
         <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
         <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f1f1f1;">
-        <center style="width: 100%; background-color: #f1f1f1;">
+    <body style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #B7C9F2;">
+        <center style="width: 100%; background-color: #B7C9F2;">
         <div style="display: none; font-size: 1px;max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
             &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
         </div>
@@ -34,7 +34,7 @@ const forgetPassMail=( link,firstName)=> {
               </tr><!-- end tr -->
               <tr>
               <td valign="middle" style="padding: 3em 0 2em 0;">
-                <img src="https://homehub.center/wp-content/uploads/2019/05/Brand-Home-Hub-Little-02.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+                <img src="https://lh3.googleusercontent.com/a/ACg8ocL5bBNBpUeJSnZCgKq-3O1jYVybqCvvjsjAxj-zMbRSHA=s288-c-no" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
               </td>
               </tr><!-- end tr -->
                     <tr>
@@ -74,10 +74,10 @@ const forgetPassMail=( link,firstName)=> {
                       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
                           <td style="text-align: left; padding-left: 5px; padding-right: 5px;">
-                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Contact Info</h3>
+                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Our Contact Info</h3>
                               <ul>
-                                        <li><span style="color: rgba(0,0,0,.5);">161/163 Muyibi street,Olodi Apapa</span></li>
-                                        <li><span style="color: rgba(0,0,0,.5);">081372586756</span></li>
+                                        <li><span style="color: rgba(0,0,0,.5);">180 Freedom Way, Eti-Osa, Lekki 101502, Lagos</span></li>
+                                        <li><span style="color: rgba(0,0,0,.5);">07063775404</span></li>
                                       </ul>
                           </td>
                         </tr>

@@ -15,13 +15,19 @@ exports.signUp = async(req,res)=>{
         const {companyName,fullName,email,phoneNumber,password,confirmPassword,address} = req.body
         // const file = req.files
 
-        const exisitingAgent = await agentModel.findOne({email});
-        if(exisitingAgent){
-            return res.status(400).json({
-                message:'User already exist'
-
-            })
+        const existingAgent = await agentModel.findOne({ $or: [{ companyName }, { email }] });
+        if (existingAgent) {
+            if (existingAgent.companyName === companyName) {
+                return res.status(400).json({
+                    message: `A company with name ${existingAgent.companyName} already exists`
+                });
+            } else {
+                return res.status(400).json({
+                    message: 'Email already exists'
+                });
+            }
         }
+       
         if(confirmPassword !== password){
             return res.status(400).json({
             message:'Password does not match'
@@ -94,7 +100,7 @@ exports.signUp = async(req,res)=>{
 exports.login = async (req,res) => {
     try {
       const {email,password} = req.body;
-      const agentExist = await agentModel.findOne({email});
+      const agentExist = await agentModel.findOne({email:email.toLowerCase()});
   
       if(!agentExist){
         return res.status(401).json({
@@ -117,13 +123,13 @@ exports.login = async (req,res) => {
     const token = jwt.sign({
         agentId:agentExist._id,
         email:agentExist.email
-    }, process.env.jwtSecret, {expiresIn:"30d"})
+    }, process.env.jwtSecret, { expiresIn: "36500d" })
     
 
     await agentExist.save()
      
     res.status(200).json({
-    message:'Login succesful',
+    message:'Login successful',
     token,
     agentExist
    })
@@ -212,27 +218,27 @@ exports.agentForgotPassword = async (req,res)=>{
         //get the email of the user
         const {email} = req.body
         //find the user data from the database using the email provided
-        const agent = await agentModel.findOne({email});
+        const agent = await agentModel.findOne({email:email.toLowerCase()});
         //check if the user exists in our database
         if (!agent){
             return res.status(404).json({
-                message:'User not found'
+                message:'Agent not found'
             })
-        }
-
+        };
+         const name = agent.companyName
         //if a user is found generate a token for user
         const token = jwt.sign({agentId:agent._id}, process.env.jwtSecret, {expiresIn: '10m'});
 
-        const link = `${req.protocol}://${req.get('host')}/api/AgentResetPassword/${token}`
-        const html = generateDynamicEmail(link,agent.fullName.slice(0, fullName.indexOf(" ")))
-        await forgetPassMail({
+        const link = `https://homehub-coxc.onrender.com/api/AgentResetPassword/${token}`
+        const html = forgetPassMail(link,name)
+        await sendEmail({
             email: agent.email,
             subject:"Password reset",
             html
         })
         //send a success response
         res.status(200).json({
-            message:'Reset password email successfully'
+            message:'Reset password email sent'
         })
     } catch (error) {
         res.status(500).json({

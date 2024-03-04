@@ -26,7 +26,7 @@ const generateDynamicEmail=( link,firstName)=> {
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                           <!-- <td style="text-align: center;">
-                            <h1 style="margin: 0;"><a href="#" style="color: #30e3ca; font-size: 24px; font-weight: 700; font-family: 'Lato', sans-serif;">THE CURVE COHORT3</a></h1>
+                            <h1 style="margin: 0;"><a href="#" style="color: #30e3ca; font-size: 24px; font-weight: 700; font-family: 'Lato', sans-serif;"></a></h1>
                           </td> -->
                       </tr>
                   </table>
@@ -34,7 +34,7 @@ const generateDynamicEmail=( link,firstName)=> {
               </tr><!-- end tr -->
               <tr>
               <td valign="middle" style="padding: 3em 0 2em 0;">
-                <img src="https://homehub.center/wp-content/uploads/2019/05/Brand-Home-Hub-Little-02.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+                <img src="https://lh3.googleusercontent.com/a/ACg8ocL5bBNBpUeJSnZCgKq-3O1jYVybqCvvjsjAxj-zMbRSHA=s288-c-no" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
               </td>
               </tr><!-- end tr -->
                     <tr>
@@ -45,7 +45,7 @@ const generateDynamicEmail=( link,firstName)=> {
                             <div style="padding: 0 2.5em; text-align: center;">
                                 <h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 40px; margin-bottom: 0; font-weight: 400;">Please verify your email</h2>
                                 <h3 style="font-family: 'Lato', sans-serif; font-size: 24px; font-weight: 300;">Welcome On Board , ${firstName},<br/>Click the button below to verify your account.</h3>
-                                <p><a href=${link} class="btn btn-primary" style="padding: 15px 35px; display: inline-block; border-radius: 3px; background:#B7C9F2 ; color: #00000; text-decoration: none;">Verify</a></p>
+                                <p><a href=${link} class="btn btn-primary" style="padding: 15px 35px; display: inline-block; border-radius: 3px; background:#F2EFE5 ; color: #00000; text-decoration: none;">Verify</a></p>
                                 <h6 style="font-family: 'Lato', sans-serif; font-size: 18px; font-weight: 300;">This email expires in 5minutes</h6>
                             </div>
                         </td>
@@ -74,10 +74,10 @@ const generateDynamicEmail=( link,firstName)=> {
                       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
                           <td style="text-align: left; padding-left: 5px; padding-right: 5px;">
-                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Contact Info</h3>
+                              <h3 style="color: #000; font-size: 20px; margin-top: 0; font-weight: 400;">Our contact Info</h3>
                               <ul>
                                         <li><span style="color: rgba(0,0,0,.5);">180 Freedom Way, Eti-Osa, Lekki 101502, Lagos</span></li>
-                                        <li><span style="color: rgba(0,0,0,.5);">081372586756</span></li>
+                                        <li><span style="color: rgba(0,0,0,.5);">07063775404</span></li>
                                       </ul>
                           </td>
                         </tr>
