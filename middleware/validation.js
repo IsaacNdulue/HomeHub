@@ -1,7 +1,15 @@
 const joi = require('joi')
 
 const validation = joi.object({
-    fullName:joi.string().min(3).max(50),
+    fullName: joi.string().required().min(3).max(100)
+    .regex(/^[a-zA-Z\s]*$/, 'letters and spaces only')
+    .messages({
+      'string.base': 'Full name must be a string',
+      'string.empty': 'Full name cannot be empty',
+      'string.min': 'Full name must have at least {#limit} characters',
+      'string.max': 'Full name must have at most {#limit} characters',
+      'string.pattern.base': 'Full name must contain letters and spaces only'
+    }),
     email: joi.string().email({ tlds: { allow: false } }).required().trim().messages({
               'string.empty': 'Email cannot be empty',
               'any.required': 'Email is required',
