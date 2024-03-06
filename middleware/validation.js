@@ -6,8 +6,8 @@ const validation = joi.object({
     .messages({
       'string.base': 'Full name must be a string',
       'string.empty': 'Full name cannot be empty',
-      'string.min': 'Full name must have at least {#limit} characters',
-      'string.max': 'Full name must have at most {#limit} characters',
+      'string.min': 'Full name must have at least 8 characters',
+      'string.max': 'Full name must have at most 8 characters',
       'string.pattern.base': 'Full name must contain letters and spaces only'
     }),
     email: joi.string().email({ tlds: { allow: false } }).required().trim().messages({
@@ -26,14 +26,14 @@ const validation = joi.object({
     }),
   
     password:joi.string().min(8).max(8)
-    .regex(/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[\W_]).{8,}$/, 'password')
+    .alphanum()
     .required()
     .messages({
       'string.base': 'Password must be a string',
       'string.empty': 'Password cannot be empty',
       'string.min': `Password should have at least 8 characters`,
       'string.max': `Password should have at most 8 characters`,
-      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, one numeric digit, and one special character'
+      'string.alphanum': 'Password must only contain alphanumeric characters'
     }),
     //pattern(new RegExp ('^[a-zA-Z0-9]{3,30}$')),
     // confirmPassword:joi.string().pattern(new RegExp ('^[a-zA-Z0-9]{3,30}$')),
