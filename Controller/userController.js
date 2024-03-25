@@ -141,6 +141,11 @@ const resetPassword = async (req, res) => {
         const {password, confirmPassword} = req.body
         const id = req.user.userId
 
+        if(password !== confirmPassword){
+            return res.status(400).json({
+                message: 'Password do not match'
+            })
+        }
         const salt = bcrypt.genSaltSync(12);
         const hashPassword = bcrypt.hashSync(password, salt);
 

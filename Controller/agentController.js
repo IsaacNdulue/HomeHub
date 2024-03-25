@@ -183,9 +183,9 @@ await jwt.verify(token, process.env.jwtSecret,async(error,value)=>{
         return value
     }
 })
-console.log("email")
+
 const verifyAgent = await agentModel.findByIdAndUpdate(id,{isVerified:true},{new:true})
-console.log(verifyAgent)
+
 //  res.status(200).json({
 //      message:`user with email:${verifyAgent.email} has been verified successfully`,
  
