@@ -155,6 +155,8 @@ exports.postHouse = async (req, res) => {
 
 
 
+
+
 const schedule = require('node-schedule');
 
 exports.sponsorPost = async (req, res) => {
@@ -174,11 +176,18 @@ exports.sponsorPost = async (req, res) => {
     const updatedHouse = await houseModel.findByIdAndUpdate(houseId, { isSponsored: true }, { new: true });
 
     // Schedule to remove sponsorship after a week
-    const job = schedule.scheduleJob(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), async function() {
+    const jobDate = new Date();
+    jobDate.setDate(jobDate.getDate() + 7); // Add 7 days to the current date
+    const job = schedule.scheduleJob(jobDate, async function() {
       await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
       console.log(`Sponsored house with ID ${houseId} removed from sponsored after a week.`);
     });
-
+    // const jobDate = new Date();
+    // jobDate.setMinutes(jobDate.getMinutes() + 1); // Add 1 minute to the current time
+    // const job = schedule.scheduleJob(jobDate, async function() {
+    //   await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
+    //   console.log(`Sponsored house with ID ${houseId} removed from sponsored after 1 minute.`);
+    // });
     res.status(201).json({
       message: "House sponsored successfully",
       data: updatedHouse, 
