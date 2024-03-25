@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 const validation = joi.object({
-    fullName: joi.string().required().trim().min(3).max(100)
+    fullName: joi.string().required().trim().min(5)
     .regex(/^[a-zA-Z\s]*$/, 'letters and spaces only')
     .messages({
       'string.base': 'Full name must be a string',
@@ -25,14 +25,14 @@ const validation = joi.object({
       'string.length': 'Phone number must be exactly 11 digits'
     }),
   
-    password:joi.string().min(8).max(8)
+    password:joi.string().min(8)
     .alphanum()
     .required()
     .messages({
       'string.base': 'Password must be a string',
       'string.empty': 'Password cannot be empty',
       'string.min': `Password should have at least 8 characters`,
-      'string.max': `Password should have at most 8 characters`,
+      'string.max': `Password should have at most 15 characters`,
       'string.alphanum': 'Password must only contain alphanumeric characters'
     }),
     //pattern(new RegExp ('^[a-zA-Z0-9]{3,30}$')),
