@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {userValidation} = require('../middleware/userValidator')
 const sendEmail= require('../helper/email')
-const welcomeEmail= require('../wHtml')
-const generateDynamicEmail= require('../html')
 const forgetPassMail= require('../ForgetPass')
 require('dotenv').config()
 
@@ -78,10 +76,6 @@ const logIn = async(req,res)=>{
 
         checkUser.token = token
         await checkUser.save()
-
-         // Check if a User is verified before accessing the platform
-    
-       
   
         return res.status(201).json({
             message: "Login successfully", 
@@ -125,8 +119,8 @@ const forgotPassword = async (req, res) => {
         } else {
             const subject = "Forgot Password"
             const link = `${req.protocol}://${req.get('host')}/api/resetPassword/${checkUser.id}/${checkUser.token}`
-            const html = resetFunc(link, name)
-            forgetPassMail({
+            const html = forgetPassMail(link, name)
+            sendEmail({
                 email: checkUser.email,
                 subject,
                 html
@@ -152,7 +146,7 @@ const resetPassword = async (req, res) => {
 
         const data = { password: hashPassword}
 
-        const reset = await User.findByIdAndUpdate(id, data, { new: true })
+        const reset = await userModel.findByIdAndUpdate(id, data, { new: true })
         // await reset.save();
         res.status(200).json('Your password has been changed')
 
