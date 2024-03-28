@@ -216,7 +216,7 @@ const addToFavorite = async(req, res)=>{
           return res.status(404).json('Property not found');
       }
        // Find the user
-       const checkUser = await userModel.findById(userId);
+       const checkUser = await userModel.findById(userId).select(['fullName','favorites']);
        if (!checkUser) {
            return res.status(404).json('User not found');
        }
@@ -245,10 +245,17 @@ const addToFavorite = async(req, res)=>{
             })
         }
         const userFavorites = await houseModel.find({_id: {$in: checkUser.favorites} })
-        return res.status(200).json({
-            message: `${userFavorites.length} propert(ies) are found in your favorites`,
-            data: userFavorites
-        })
+        if(userFavorites.length === 0){
+            return res.status(200).json({
+                message: 'No Property is added to favorites'
+            })
+        } else{
+            return res.status(200).json({
+                message: `${userFavorites.length} propert(ies) are found in your favorites`,
+                data: userFavorites
+            })
+        }
+        
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -267,7 +274,7 @@ const addToFavorite = async(req, res)=>{
    return res.status(400).json('Property not Found')
 }
   //Find the user
-  const checkUser = await userModel.findById(userId)  
+  const checkUser = await userModel.findById(userId).select(['fullName','favorites']) 
    if(!checkUser){
    return res.status(404).json('User not Found')
 }
