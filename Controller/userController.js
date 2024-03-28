@@ -79,7 +79,8 @@ const logIn = async(req,res)=>{
   
         return res.status(201).json({
             message: "Login successfully", 
-            token: token
+            token: token,
+            checkUser
         })
    
     } catch (error) {
@@ -109,6 +110,7 @@ const update = async(req,res)=>{
         return res.status(500).json(error.message)
     }
 } 
+
 const forgotPassword = async (req, res) => {
     try {
         const checkUser = await userModel.findOne({ email: req.user.email })
