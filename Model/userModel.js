@@ -22,7 +22,7 @@ isVerified:{
    type: Boolean,
    default: false
 },
-favorite:[{
+favorites:[{
    type: String
 }],
 token:{

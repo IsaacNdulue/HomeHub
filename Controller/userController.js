@@ -164,7 +164,7 @@ const resetPassword = async (req, res) => {
 }
 
 //Get all Users on this platform
-const getAll = async (req,res)=>{
+const allUsers = async (req,res)=>{
     try {
         const allUsers = await userModel.find().select(['-phoneNumber'])
         if(allUsers.length === 0){
@@ -183,7 +183,7 @@ const getAll = async (req,res)=>{
 }
 
 //Get one User on this Platform
-const getOne = async (req,res)=>{
+const oneUser = async (req,res)=>{
     try {
         const userId = req.params.id
         const checkUser = await userModel.findById(userId);
@@ -204,7 +204,7 @@ const getOne = async (req,res)=>{
 
 const houseModel = require('../Model/houseModel')
 // Function to add post to favourite
-const favoriteProperty = async(req, res)=>{
+const addToFavorite = async(req, res)=>{
     try {
       const propertyId = req.params.id;
       const userId = req.user.userId;
@@ -218,12 +218,12 @@ const favoriteProperty = async(req, res)=>{
        if (!checkUser) {
            return res.status(404).json('User not found');
        }
-       const isAlreadyFavorite = checkUser.favorite.includes(propertyId)
+       const isAlreadyFavorite = checkUser.favorites.includes(propertyId)
        if(isAlreadyFavorite){
         return res.status(400).json('Property is already added to favorite')
        }
         // Add the property to the user's favorites
-      checkUser.favorite.push(propertyId);
+      checkUser.favorites.push(propertyId);
       await checkUser.save();
       return res.status(200).json({message: 'Property added to favourite successfully', checkUser})
       
@@ -233,15 +233,36 @@ const favoriteProperty = async(req, res)=>{
     }
   }
 
+  const getUserFavorites = async(req,res)=>{
+    try {
+        const userId = req.user.userId
+        const checkUser = await userModel.findById(userId)
+        if(!checkUser){
+            return res.status(404).json({
+                message: 'User not Found'
+            })
+        }
+        const userFavorites = await houseModel.find({_id: {$in: checkUser.favorites} })
+        return res.status(200).json({
+            message: `${userFavorites.length} propert(ies) are found in your favorites`,
+            data: userFavorites
+        })
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        })
+    }
+  }
+
  
-  const removeFavorite = async(req, res)=>{
+  const removeFromFavorite = async(req, res)=>{
     try {
       const propertyId = req.params.id
       const userId = req.user.userId
 //Find the post ID
    const property = await houseModel.findById(propertyId)
    if(!property){
-   return res.status(400).json('Post not Found')
+   return res.status(400).json('Property not Found')
 }
   //Find the user
   const checkUser = await userModel.findById(userId)  
@@ -249,12 +270,12 @@ const favoriteProperty = async(req, res)=>{
    return res.status(404).json('User not Found')
 }
   // Check if the post is in the user's favorites
-   const propertyIndex = checkUser.favorite.indexOf(propertyId);
+   const propertyIndex = checkUser.favorites.indexOf(propertyId);
   if (propertyIndex === -1) {
    return res.status(400).json('Property is not in favorites');
 }else{
      // Remove the post from the user's favorites
-  checkUser.favorite.splice(propertyIndex, 1);
+  checkUser.favorites.splice(propertyIndex, 1);
   await checkUser.save();
   return res.status(200).json({message: 'Property removed from favorites successfully', checkUser})
 
@@ -278,12 +299,12 @@ const deleteUserAccount = async (req, res) => {
         // check for error
         if (!checkUser) {
           return  res.status(404).json({
-                message: `User ${fullName} is not found`
+                message: `User is not found`
             })
         }
         // delete the user from the model
-        await User.findByIdAndDelete(id)
-        return res.status(200).json('Account deleted')
+        await userModel.findByIdAndDelete(id)
+        return res.status(200).json('Account deleted successfully')
        // return res.redirect('/');
 
     } catch (err) {
@@ -319,5 +340,5 @@ const logOut = async (req, res) => {
     }
 }
 
-module.exports = {signUp, logIn, update, favoriteProperty,removeFavorite, deleteUserAccount, 
-                    forgotPassword, resetPassword, getAll, getOne, logOut}
+module.exports = {signUp, logIn, update, addToFavorite, getUserFavorites, removeFromFavorite, deleteUserAccount, 
+                    forgotPassword, resetPassword, allUsers, oneUser, logOut}
