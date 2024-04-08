@@ -12,7 +12,7 @@ router.put('/update/:id', authenticate, update);
 //add to favorite
 router.post('/addToFavorite/:id',authenticate, addToFavorite)
 //Get all the users Favorites properties
-router.get('/getAllFavorites', getUserFavorites);
+router.get('/getAllFavorites', authenticate, getUserFavorites);
 //remove From Favourite 
 router.post("/removeFavorite/:id", authenticate, removeFromFavorite)
 

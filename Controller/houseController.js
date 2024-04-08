@@ -2,6 +2,7 @@ const agentModel = require('../Model/agentModel')
 const cateModel = require('../Model/CateModel')
 const house = require('../Model/houseModel')
 const houseModel = require('../Model/houseModel')
+const userModel = require('../Model/userModel.js')
 const cloudinary = require('../Utility/cloudinary.js')
 const jwt = require("jsonwebtoken")
 
@@ -115,7 +116,8 @@ exports.postHouse = async (req, res) => {
       req.files.map(async (file) => {
         
         const result = await cloudinary.uploader.upload(file.path, {folder: "Uproject/profileImage", resource_type: 'auto' });
-        return result.secure_url;
+        return result.secure_url,
+               result.public_id;
       })
     );
 
@@ -582,41 +584,56 @@ exports.getAllHouse = async (req,res)=>{
     }
   }
   
-  exports.deleteOneHouse = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const house = await houseModel.findByIdAndDelete(id);
-        const agent = await agentModel.find()
 
-        if(!house){
+exports.deleteOneHouse = async (req, res) => {
+  try {
+      const id = req.params.id;
+      // Find the document by ID
+      const toDelete = await houseModel.findById(id);
+      //console.log(toDelete)
+      if (!toDelete) {
           return res.status(404).json({
-              message: 'House does not exist'
-          })
+              message: 'Property not found'
+          });
       }
-        if(agent.isVerified = false){
-          return res.status(400).json({
-            message:`Your account has not been verified you can't delete this property`
-          })
-        }
-    
-        //fetch category
-        const category = await cateModel.findOne({house:id})
 
-        if(category){
-          //removing the ID from the category's house array
-          category.house = category.house.filter(houseId => houseId.toString() !== id)
-          await category.save()
-        }
-      
-        res.status(200).json({
-            message: 'House deleted'
-        })
-    }catch (error) {
-        res.status(500).json({
-            message: error.message
-        })
-    }
-}
+      // Remove the reference to the deleted post from the sponsorship section collection
+      // Assuming the section is maintained in a separate collection called 'categories'
+      await cateModel.updateMany(
+          {'properties': id},
+          { $pull: { 'properties': id } }
+      );
+      await agentModel.updateMany(
+          { 'housePosted': id },
+        { $pull: { 'housePosted': id } }
+      );
+      await userModel.updateMany(
+          { 'favorite': id },
+        { $pull: { 'favorite': id } }
+      )
+
+      // Extract public IDs from the retrieved document
+      const imagePublicIds = toDelete.images.map(image => image.public_id);
+
+      // Delete the images from Cloudinary
+      for (const publicId of imagePublicIds) {
+          await cloudinary.uploader.destroy(publicId);
+      }
+         // Delete from the house collection
+        await houseModel.findByIdAndDelete(id);
+       
+      return res.status(200).json({
+          message: 'Property deleted successfully'
+      });
+
+  } catch (error) {
+      return res.status(500).json({
+          message: 'An error occurred during deletion',
+          error: error.message
+      });
+  }
+};
+
   
   exports.deleteAllHouses = async (req, res) => {
     try {
