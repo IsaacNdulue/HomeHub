@@ -724,55 +724,63 @@ exports.getAllHouse = async (req,res)=>{
   };
   
   
-
-exports.deleteOneHouse = async (req, res) => {
-  try {
+  exports.deleteOneHouse = async (req, res) => {
+    try {
       const id = req.params.id;
+  
       // Find the document by ID
       const toDelete = await houseModel.findById(id);
-      //console.log(toDelete)
+  
       if (!toDelete) {
-          return res.status(404).json({
-              message: 'Property not found'
-          });
+        return res.status(404).json({
+          message: 'Property not found'
+        });
       }
-
+  
       // Remove the reference to the deleted post from the sponsorship section collection
-      // Assuming the section is maintained in a separate collection called 'categories'
       await cateModel.updateMany(
-          {'properties': id},
-          { $pull: { 'properties': id } }
+        { 'properties': id },
+        { $pull: { 'properties': id } }
       );
       await agentModel.updateMany(
-          { 'housePosted': id },
+        { 'housePosted': id },
         { $pull: { 'housePosted': id } }
       );
       await userModel.updateMany(
-          { 'favorite': id },
+        { 'favorite': id },
         { $pull: { 'favorite': id } }
-      )
-
+      );
+  
       // Extract public IDs from the retrieved document
-      const imagePublicIds = toDelete.images.map(image => image.public_id);
-
+      const imagePublicIds = toDelete.images
+        .map(image => image.public_id)
+        .filter(public_id => public_id); // Filter out any null or undefined public_id
+  
       // Delete the images from Cloudinary
       for (const publicId of imagePublicIds) {
+        try {
           await cloudinary.uploader.destroy(publicId);
+        } catch (cloudinaryError) {
+          console.error(`Failed to delete image with public_id: ${publicId}`, cloudinaryError);
+          // Optionally, continue deleting other images even if one fails
+        }
       }
-         // Delete from the house collection
-        await houseModel.findByIdAndDelete(id);
-       
+  
+      // Delete from the house collection
+      await houseModel.findByIdAndDelete(id);
+  
       return res.status(200).json({
-          message: 'Property deleted successfully'
+        message: 'Property deleted successfully'
       });
-
-  } catch (error) {
+  
+    } catch (error) {
       return res.status(500).json({
-          message: 'An error occurred during deletion',
-          error: error.message
+        message: 'An error occurred during deletion',
+        error: error.message
       });
-  }
-};
+    }
+  };
+  
 
   
   exports.deleteAllHouses = async (req, res) => {
