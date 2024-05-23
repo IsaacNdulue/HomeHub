@@ -1,6 +1,6 @@
 const express = require('express')
 const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,agentForgotPassword,AgentResetPassword,verify, getAgentHouses } = require('../Controller/agentController')
-const { postHouse, sponsorPost, updateHouse, getOneHouse, editHouse, getAllHouse, getAgentSponsoredPost, allSponsoredPost, deleteSponsoredHouse, deleteOneHouse,deleteAllHouses, verifyHouse, getSomeHouse } = require('../Controller/houseController')
+const { postHouse, sponsorPost, updateHouse, getOneHouse, editHouse, getAllHouse, getAgentSponsoredPost, allSponsoredPost, deleteSponsoredHouse, deleteOneHouse,deleteAllHouses, verifyHouse, getSomeHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
 const {authenticate, admin} = require('../middleware/authenticate')
 const authorization = require('../middleware/authorization')
@@ -73,13 +73,10 @@ router.patch('/house/edit/:houseId',authorization, upload.array('images'), editH
 
 router.get('/gethouse/:id', getOneHouse)
 
-<<<<<<< HEAD
-router.get('/getallhouse',getAllHouse)
-router.get('/getSomeHouses', getSomeHouse)
-=======
 router.get('/getallhouse', getAllHouse)
-router.get('/adminGetAllHouses', admin, getAllHouse)//admin can get all houses. Not added to the documentation yet
->>>>>>> 3b3218ab8bb9024941f92bde875ff463edc512e7
+router.get('/getSomeHouses', getSomeHouses)
+// router.get('/adminGetAllHouses', admin, getAllHouses)//admin can get all houses. Not added to the documentation yet
+
 
 router.delete('/deletehouse/:id', deleteOneHouse)
 

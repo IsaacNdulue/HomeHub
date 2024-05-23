@@ -689,7 +689,7 @@ exports.getAllHouse = async (req,res)=>{
     }
   }
 
-  exports.getSomeHouse = async (req, res) => {
+  exports.getSomeHouses = async (req, res) => {
     try {
       // Default limit to 10 if not specified, convert query param to integer
       const limit = parseInt(req.query.limit) || 8;
