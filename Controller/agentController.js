@@ -44,13 +44,19 @@ exports.signUp = async(req,res)=>{
           })
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
-        
-        const documentImageFile = req.files['documentImage'][0].path
-        const documentImageResult = await cloudinary.uploader.upload(documentImageFile)
- 
 
-        const regCertFile = req.files['regCert'][0].path
-        const regCertResult = await cloudinary.uploader.upload(regCertFile)
+        const documentImageFile = req.files['documentImage'][0].path;
+        const documentImageResult = await cloudinary.uploader.upload(documentImageFile, {
+            folder: "HomeHubAgentDocument",
+            resource_type: 'auto' 
+        });
+        
+        const regCertFile = req.files['regCert'][0].path;
+        const regCertResult = await cloudinary.uploader.upload(regCertFile, {
+            folder: "HomeHubAgentDocument", 
+            resource_type: 'auto'
+        });
+        
 
         const agent = await agentModel.create({
             companyName,
@@ -72,13 +78,91 @@ exports.signUp = async(req,res)=>{
         // .toUpperCase().slice(0, fullName.indexOf(" "))
           // Sending a verification email to the agent
 
-          const subject = 'Verify your account';
+          const subject = 'welcome to homehub';
           const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}/${token}`;
           const html = generateDynamicEmail(link, agent.companyName);
           await sendEmail({
               email: agent.email,
               subject,
               html
+          });
+
+          const adminEmail = 'homehub95@gmail.com';
+          const adminSubject = 'New Agent Registration';
+          
+          const adminHtml = `
+          <!DOCTYPE html>
+          <html lang="en">
+          
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>New User Registration</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      background-color: #f4f4f4;
+                      padding: 20px;
+                  }
+          
+                  .container {
+                      max-width: 600px;
+                      margin: 0 auto;
+                      background-color: #ffffff;
+                      padding: 20px;
+                      border-radius: 5px;
+                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                  }
+          
+                  .header {
+                      text-align: center;
+                      margin-bottom: 20px;
+                  }
+          
+                  .content {
+                      margin-bottom: 20px;
+                  }
+          
+                  .user-info {
+                      margin-bottom: 10px;
+                  }
+              </style>
+          </head>
+          
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h2>New Agent Registration</h2>
+                  </div>
+                  <div class="content">
+                      <p>Hello Admin,</p>
+                      <p>We are pleased to inform you that a new Agent has recently signed up on Home Hub. Here are the agent's details:</p>
+                      <div class="user-info">
+                          <strong>Full Name:</strong> ${fullName}
+                      </div>
+                      <div class="user-info">
+                          <strong>User Name:</strong> ${companyName}
+                      </div>
+                      <div class="user-info">
+                          <strong>Email:</strong> ${email}
+                      </div>
+                      <p>Date of Signup: ${new Date().toLocaleDateString()}</p>
+                      <p>Time of Signup: ${new Date().toLocaleTimeString()}</p>
+                      <p>Please take the necessary steps to welcome and onboard the new agent into your system. If you have any further questions or require additional info, feel free to reach out to the software engineering team.</p>
+                      <p>Best Regards,</p>
+                      <p>Home Hub software engineers</p>
+                  </div>
+              </div>
+          </body>
+          
+          </html>
+          
+          `;
+          
+          await sendEmail({
+              email: adminEmail,
+              subject: adminSubject,
+              html: adminHtml
           });
     
         return res.status(200).json({
@@ -611,35 +695,41 @@ exports.getHousebyCate = async (req, res) => {
 }
 
 
-
 exports.deleteOneAgent = async (req, res) => {
     try {
         const id = req.params.id;
+        console.log(`Attempting to delete agent with ID: ${id}`);
 
         // Find the agent by ID
         const agent = await agentModel.findById(id);
         if (!agent) {
+            console.log('Agent not found');
             return res.status(404).json({
                 message: 'Agent does not exist'
             });
         }
+        console.log(`Agent found: ${agent}`);
 
         // Find all houses uploaded by the agent
         const houses = await houseModel.find({ agent: id });
+        console.log(`Houses found: ${houses.length}`);
 
         // Delete all found houses
         if (houses.length > 0) {
             const houseDeletionPromises = houses.map(house => houseModel.findByIdAndDelete(house._id));
             await Promise.all(houseDeletionPromises);
+            console.log('All houses deleted');
         }
 
         // Delete the agent
         await agentModel.findByIdAndDelete(id);
+        console.log('Agent deleted');
 
         res.status(200).json({
             message: 'Agent and their houses deleted'
         });
     } catch (error) {
+        console.error('Error deleting agent:', error);
         res.status(500).json({
             message: error.message
         });

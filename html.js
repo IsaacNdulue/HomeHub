@@ -43,10 +43,10 @@ const generateDynamicEmail=( link,firstName)=> {
                     <tr>
                         <td>
                             <div style="padding: 0 2.5em; text-align: center;">
-                                <h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 40px; margin-bottom: 0; font-weight: 400;">Please verify your email</h2>
-                                <h3 style="font-family: 'Lato', sans-serif; font-size: 24px; font-weight: 300;">Welcome On Board , ${firstName},<br/>Click the button below to verify your account.</h3>
+                                <h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 24px; margin-bottom: 0; font-weight: 400;"> Welcome to HomeHub ${firstName}</h2>
+                                <h3 style="font-family: 'Lato', sans-serif; font-size: 10px; font-weight: 150;">click the button below to verify your account.</h3>
                                 <p><a href=${link} class="btn btn-primary" style="padding: 15px 35px; display: inline-block; border-radius: 3px; background:#F2EFE5 ; color: #00000; text-decoration: none;">Verify</a></p>
-                                <h6 style="font-family: 'Lato', sans-serif; font-size: 18px; font-weight: 300;">This email expires in 5minutes</h6>
+                                <h6 style="font-family: 'Lato', sans-serif; font-size: 10px; font-weight: 300;">This email expires in 5minutes</h6>
                             </div>
                         </td>
                     </tr>
