@@ -59,6 +59,20 @@ const authenticate = async (req,res,next)=>{
     }
 }
 
+const admin = (req, res, next)=>{
+    authenticate(req, res, async ()=>{
+        if(req.user.isAdmin){
+            next()
+        } else {
+            return res.status(401).json({
+                message: "User not authorized"
+            })
+        }
+    })
+}
 
 
-module.exports = authenticate
+module.exports = {
+    authenticate, 
+    admin
+}

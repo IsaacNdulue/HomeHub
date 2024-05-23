@@ -2,7 +2,7 @@ const express = require('express')
 const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,agentForgotPassword,AgentResetPassword,verify, getAgentHouses } = require('../Controller/agentController')
 const { postHouse, sponsorPost, updateHouse, getOneHouse, editHouse, getAllHouse, getAgentSponsoredPost, allSponsoredPost, deleteSponsoredHouse, deleteOneHouse,deleteAllHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
-const authenticate = require('../middleware/authenticate')
+const {authenticate, admin} = require('../middleware/authenticate')
 const authorization = require('../middleware/authorization')
 const upload = require('../Utility/multer')
 
@@ -30,23 +30,23 @@ router.get('/getAgentHouse/:id',getAgentHouses)
 
 router.get('/forSaleProperty/:id', getAgentHousesForSale)
 router.get('/forRentProperty/:id', getAgentHousesForRent)
-router.delete('/deleteagent/:id', deleteOneAgent)
+router.delete('/deleteagent/:id', admin, deleteOneAgent)
 
 // router.post('/logout/:id', logOut)
 
 router.put('/Category', createCategory)
 
 //get Category
-router.get('/getCate',getCategory)
+router.get('/getCate', getCategory)
 
 router.get('/getOneCate/:id', getOneCate)
-router.delete('/deleteOneCate/:id', deleteOneCate)
+router.delete('/deleteOneCate/:id', admin, deleteOneCate)
 
 //Make an admin
-router.get('/MakeAdmin', MakeAdmin)
+router.get('/MakeAdmin', admin, MakeAdmin)
 
 //Update is good for an agent
-router.put('/updateIsGood/:id', updateIsGood)
+router.put('/updateIsGood/:id', admin, updateIsGood)
 
 //post a house
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
