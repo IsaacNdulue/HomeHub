@@ -178,18 +178,13 @@ exports.sponsorPost = async (req, res) => {
     const updatedHouse = await houseModel.findByIdAndUpdate(houseId, { isSponsored: true }, { new: true });
 
     // Schedule to remove sponsorship after a week
+ 
     const jobDate = new Date();
-    jobDate.setDate(jobDate.getDate() + 7); // Add 7 days to the current date
+    jobDate.setMinutes(jobDate.getMinutes() + 10080 ); // Add 1 minute to the current time
     const job = schedule.scheduleJob(jobDate, async function() {
       await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
-      console.log(`Sponsored house with ID ${houseId} removed from sponsored after a week.`);
+      console.log(`Sponsored house with ID ${houseId} removed from sponsored after 7days.`);
     });
-    // const jobDate = new Date();
-    // jobDate.setMinutes(jobDate.getMinutes() + 1); // Add 1 minute to the current time
-    // const job = schedule.scheduleJob(jobDate, async function() {
-    //   await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
-    //   console.log(`Sponsored house with ID ${houseId} removed from sponsored after 1 minute.`);
-    // });
     res.status(201).json({
       message: "House sponsored successfully",
       data: updatedHouse, 
