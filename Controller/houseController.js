@@ -489,6 +489,111 @@ exports.editHouse = async (req, res) => {
 
 
 
+// Email template for notifying the agent about house verification
+const generateAgentEmail = (agentName, houseDetails) => {
+  return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>House Verified</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  padding: 20px;
+              }
+              .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
+              .header {
+                  text-align: center;
+                  margin-bottom: 20px;
+              }
+              .content {
+                  margin-bottom: 20px;
+              }
+              .house-info {
+                  margin-bottom: 10px;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="header">
+                  <h2>House Verified</h2>
+              </div>
+              <div class="content">
+                  <p>Hello ${agentName},</p>
+                  <p>We are pleased to inform you that a house listed has been verified. Here are the details:</p>
+                  <div class="house-info">
+                      <strong>Type:</strong> ${houseDetails.type}
+                  </div>
+                  <div class="house-info">
+                      <strong>Location:</strong> ${houseDetails.location}
+                  </div>
+                  <div class="house-info">
+                      <strong>Amount:</strong> ${houseDetails.amount}
+                  </div>
+                  <p>Thank you for using our platform. If you have any questions, feel free to reach out to us.</p>
+                  <p>Best Regards,</p>
+                  <p>HomeHub</p>
+              </div>
+          </div>
+      </body>
+      </html>
+  `;
+};
+
+exports.verifyHouse = async (req, res) => {
+  try {
+      const id = req.params.id;
+
+      // Update the house, setting isVerified to true
+      const updatedHouse = await houseModel.findByIdAndUpdate(
+          id, 
+          { isVerified: true }, 
+          { new: true }
+      );
+
+      if (!updatedHouse) {
+          return res.status(400).json({
+              message: 'House not found',
+          });
+      }
+
+      // Find the agent associated with the house
+      const agent = await agentModel.findById(updatedHouse.agentId);
+      if (agent) {
+          // Prepare the email content
+          const subject = 'House Verified';
+          const html = generateAgentEmail(agent.companyName, updatedHouse);
+
+          // Send the email to the agent
+          await sendEmail({
+              email: agent.email,
+              subject,
+              html
+          });
+      }
+
+      return res.status(200).json({
+          message: "House verification updated successfully",
+          data: updatedHouse
+      });
+  } catch (error) {
+      res.status(500).json({
+          message: error.message
+      });
+  }
+};
+
 
 
 // exports.editHouse = async (req, res) => {

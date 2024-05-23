@@ -27,6 +27,10 @@ const houseModel = new mongoose.Schema({
    type:Boolean,
    default:false
  },
+ isVerified:{
+   type:Boolean,
+   default:false
+ },
  agentId:{
    type:mongoose.SchemaTypes.ObjectId,
    ref:'agentModel'
