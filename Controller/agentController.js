@@ -611,24 +611,41 @@ exports.getHousebyCate = async (req, res) => {
 }
 
 
+
 exports.deleteOneAgent = async (req, res) => {
     try {
         const id = req.params.id;
-        const agent = await agentModel.findByIdAndDelete(id);
-        if(!agent){
+
+        // Find the agent by ID
+        const agent = await agentModel.findById(id);
+        if (!agent) {
             return res.status(404).json({
-                message: 'agent does not exist'
-            })
+                message: 'Agent does not exist'
+            });
         }
+
+        // Find all houses uploaded by the agent
+        const houses = await houseModel.find({ agent: id });
+
+        // Delete all found houses
+        if (houses.length > 0) {
+            const houseDeletionPromises = houses.map(house => houseModel.findByIdAndDelete(house._id));
+            await Promise.all(houseDeletionPromises);
+        }
+
+        // Delete the agent
+        await agentModel.findByIdAndDelete(id);
+
         res.status(200).json({
-            message: 'agent deleted'
-        })
-    }catch (error) {
+            message: 'Agent and their houses deleted'
+        });
+    } catch (error) {
         res.status(500).json({
             message: error.message
-        })
+        });
     }
-}
+};
+
 
 exports.logOut= async (req,res)=>{
     try{
@@ -660,7 +677,7 @@ exports.logOut= async (req,res)=>{
       }
       agent.token = null;
 
-      agent.blackList.push(token)
+    //   agent.blackList.push(token)
       await agent.save()
     // agent.token=null
   
