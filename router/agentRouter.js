@@ -51,7 +51,7 @@ router.put('/updateIsGood/:id', admin, updateIsGood)
 //post a house
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
 router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
-router.put('/verifyHouse', verifyHouse)
+router.put('/verifyHouse', admin, verifyHouse)
   
 
 //sponsor a post
@@ -73,7 +73,8 @@ router.patch('/house/edit/:houseId',authorization, upload.array('images'), editH
 
 router.get('/gethouse/:id', getOneHouse)
 
-router.get('/getallhouse',getAllHouse)
+router.get('/getallhouse', getAllHouse)
+router.get('/adminGetAllHouses', admin, getAllHouse)//admin can get all houses. Not added to the documentation yet
 
 router.delete('/deletehouse/:id', deleteOneHouse)
 
