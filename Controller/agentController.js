@@ -72,7 +72,7 @@ exports.signUp = async(req,res)=>{
         // .toUpperCase().slice(0, fullName.indexOf(" "))
           // Sending a verification email to the agent
 
-          const subject = 'Kindly verify your account';
+          const subject = 'Verify your account';
           const link = `${req.protocol}://${req.get('host')}/api/verify/${agent._id}/${token}`;
           const html = generateDynamicEmail(link, agent.companyName);
           await sendEmail({
