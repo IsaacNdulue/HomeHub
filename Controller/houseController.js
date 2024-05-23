@@ -688,6 +688,41 @@ exports.getAllHouse = async (req,res)=>{
       })
     }
   }
+
+  exports.getSomeHouse = async (req, res) => {
+    try {
+      // Default limit to 10 if not specified, convert query param to integer
+      const limit = parseInt(req.query.limit) || 8;
+      // Default skip to 0 if not specified, convert query param to integer
+      const skip = parseInt(req.query.skip) || 0;
+  
+      // Fetch houses with pagination and population
+      const houses = await houseModel.find().populate({
+        path: 'category',
+        select: 'type'
+      }).skip(skip).limit(limit);
+  
+      // Check if houses are found
+      if (houses.length === 0) {
+        return res.status(404).json({
+          message: "Houses not found"
+        });
+      }
+  
+      // Return the found houses
+      return res.status(200).json({
+        message: `this are ${houses.length} houses listed below`,
+        data: houses
+      });
+  
+    } catch (error) {
+      // Handle any errors that occur during the fetch
+      return res.status(500).json({
+        message: error.message
+      });
+    }
+  };
+  
   
 
 exports.deleteOneHouse = async (req, res) => {
