@@ -5,6 +5,7 @@ const houseModel = require('../Model/houseModel')
 const userModel = require('../Model/userModel.js')
 const cloudinary = require('../Utility/cloudinary.js')
 const jwt = require("jsonwebtoken")
+const sendEmail = require('../helper/email')
 
 
 
@@ -526,7 +527,7 @@ const generateAgentEmail = (agentName, houseDetails) => {
               </div>
               <div class="content">
                   <p>Hello ${agentName},</p>
-                  <p>We are pleased to inform you that a house listed has been verified. Here are the details:</p>
+                  <p>We are pleased to inform you that one of your houses listed on our platform has been verified. Here are the details:</p>
                   <div class="house-info">
                       <strong>Type:</strong> ${houseDetails.type}
                   </div>
