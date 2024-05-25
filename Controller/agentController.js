@@ -406,10 +406,10 @@ exports.MakeAdmin = async (req,res)=>{
 
 exports.updateIsGood = async (req,res)=>{
     try {
-       // check if the user making the request is an Admin
-       if(!req.user.isAdmin){
-        return res.status(i403).json({error:'Unauthorized. Must be Admin'})
-       }
+       // Check if the user making the request is an Admin
+       if (!req.user || !req.user.isAdmin) {
+        return res.status(403).json({ error: 'Unauthorized. Must be an Admin' });
+    }
        const agentId = req.params.id || req.body.agentId;
 
        //find the agent in database
@@ -419,7 +419,7 @@ exports.updateIsGood = async (req,res)=>{
         return res.status(404).json({error:'Agent not found.'})
        }
         //Update isGood to true
-        agent.isGood = true
+        agent.isGood = true;
 
     await agent.save()
     res.status(200).json({message:'isGood is updated, agent can make posts now'})

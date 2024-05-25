@@ -60,7 +60,7 @@ require("dotenv").config()
 // }
 
 
-exports.authenticateAdmin = async (req, res, next) => {
+const authenticateAdmin = async (req, res, next) => {
     try {
       // Extract the token from the request headers
       const hasAuthorization = req.headers.authorization;
@@ -98,6 +98,6 @@ exports.authenticateAdmin = async (req, res, next) => {
 };
 
 
-// module.exports = {
-//     authenticate
-// }
+module.exports = {
+    authenticateAdmin
+}

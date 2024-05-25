@@ -2,9 +2,9 @@ const express = require('express')
 const { login, signUp, logOut,updateIsGood,MakeAdmin,getAllAgent,getHousebyCate,getOneAgent, getAgentHousesForSale, getAgentHousesForRent,deleteOneAgent,agentForgotPassword,AgentResetPassword,verify, getAgentHouses } = require('../Controller/agentController')
 const { postHouse, sponsorPost, updateHouse, getOneHouse, editHouse, getAllHouse, getAgentSponsoredPost, allSponsoredPost, deleteSponsoredHouse, deleteOneHouse,deleteAllHouses, verifyHouse, getSomeHouses } = require('../Controller/houseController')
 const { createCategory, getCategory, getOneCate,deleteOneCate } = require('../Controller/CateController')
-const { authenticateAdmin} = require('../middleware/authenticate')
 const authorization = require('../middleware/authorization')
 const upload = require('../Utility/multer')
+const { authenticateAdmin } = require('../middleware/authenticate')
 
 
 const router = express.Router()
@@ -46,9 +46,9 @@ router.delete('/deleteOneCate/:id',  deleteOneCate)
 router.get('/MakeAdmin', MakeAdmin)
 
 //Update is good for an agent
-router.put('/updateIsGood/:id',  updateIsGood)
+router.put('/updateIsGood/:id', authenticateAdmin,  updateIsGood)
 
-//post a house
+//post a house 
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
 router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
 router.put('/verifyHouse/:id',  verifyHouse)
