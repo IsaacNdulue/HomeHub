@@ -81,7 +81,7 @@ const authenticateAdmin = async (req, res, next) => {
       if (!agent) {
         return res.status(403).json({ error: 'Unauthorized access' });
       }
-      if (!agent.isAdmin === true) {
+      if (agent.isAdmin !== true) {
         return res.status(403).json({ error: 'Unauthorized access, must be an admin' });
       }
   
