@@ -46,7 +46,7 @@ router.delete('/deleteOneCate/:id',  deleteOneCate)
 router.get('/MakeAdmin', MakeAdmin)
 
 //Update is good for an agent
-router.put('/updateIsGood/:id', authenticateAdmin,  updateIsGood)
+router.put('/updateIsGood/:id', authenticateAdmin, updateIsGood)
 
 //post a house 
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)

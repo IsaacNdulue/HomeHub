@@ -206,7 +206,8 @@ exports.login = async (req,res) => {
 
     const token = jwt.sign({
         agentId:agentExist._id,
-        email:agentExist.email
+        email:agentExist.email,
+        isAdmin:agentExist.isAdmin
     }, process.env.jwtSecret, { expiresIn: "36500d" })
     
 
@@ -378,9 +379,7 @@ exports.AgentResetPassword = async (req, res)=> {
 exports.MakeAdmin = async (req,res)=>{
     try {
   
-        const agentToken = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(agentToken, process.env.jwtSecret);
-        const agentId = decoded.agentId
+        const agentId = req.params.agentId
 
         const agent = await agentModel.findById(agentId);
         if(!agent){
