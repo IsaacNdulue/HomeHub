@@ -51,7 +51,7 @@ router.put('/updateIsGood/:id', authenticateAdmin, updateIsGood)
 //post a house 
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
 router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
-router.put('/verifyHouse/:id',  verifyHouse)
+router.put('/verifyHouse/:id',authenticateAdmin,  verifyHouse)
   
 
 //sponsor a post
