@@ -22,7 +22,7 @@ router.get('/getone/:id', authenticateAdmin, oneUser)
 //endpoint to get all Users
 router.get('/allusers',authenticateAdmin, allUsers)
 //endpoint to delete a User account
-router.delete('/deleteAccount/:id', authenticate, authenticateAdmin, deleteUserAccount)
+router.delete('/deleteAccount/:id', authenticateAdmin, deleteUserAccount)
 //endpoint for User to get/change password through a link
 router.post('/forgotpassword', authenticate, forgotPassword);
 //endpoint to reset a user password
