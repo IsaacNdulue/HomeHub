@@ -1,6 +1,7 @@
 const express = require('express');
 const {signUp, logIn, update, addToFavorite, getUserFavorites, removeFromFavorite, forgotPassword, resetPassword, logOut, deleteUserAccount, allUsers, oneUser} = require('../Controller/userController');
 const {authenticate} = require('../middleware/userAuth');
+const { authenticateAdmin } = require('../middleware/authenticate');
 
 const router = express.Router()
 //endpoint to Sigup a user
@@ -17,9 +18,9 @@ router.get('/getAllFavorites', authenticate, getUserFavorites);
 router.post("/removeFavorite/:id", authenticate, removeFromFavorite)
 
 //endpoint to get all Users
-router.get('/getone/:id', oneUser)
+router.get('/getone/:id', authenticateAdmin, oneUser)
 //endpoint to get all Users
-router.get('/allusers', allUsers)
+router.get('/allusers',authenticateAdmin, allUsers)
 //endpoint to delete a User account
 router.delete('/deleteAccount/:id', authenticate, deleteUserAccount)
 //endpoint for User to get/change password through a link
