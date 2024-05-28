@@ -333,48 +333,46 @@ exports.agentForgotPassword = async (req,res)=>{
 }
 
 
-exports.AgentResetPassword = async (req, res)=> {
+exports.AgentResetPassword = async (req, res) => {
     try {
-    // get the token from the params
-    const {token} = req.params;
-    //get the new password from the body
-    const {newPassword, confirmPassword} = req.body;
-        //verify the validity of the token
+        // get the agent ID from the params
+        const { agentId } = req.params;
+        // get the new password from the body
+        const { newPassword, confirmPassword } = req.body;
+        
+        // verify that the new password matches the confirmed password
         if (newPassword !== confirmPassword) {
             return res.status(400).json({
                 message: "Password does not match"
-            })
+            });
+        }
+        // find the agent using the agent ID from params
+        const agentExist = await agentModel.findById(agentId);
+        if (!agentExist) {
+            return res.status(404).json({
+                message: "Agent not found"
+            });
         }
 
-    const decodedToken = jwt.verify(token, process.env.jwtSecret)
+        // encrypt the agent's new password
+        const salt = bcrypt.genSaltSync(12);
+        const hash = bcrypt.hashSync(newPassword, salt);
 
-     //find the agent of the token by the id
-     const agentExist = await agentModel.findById(decodedToken.agentId)
-     if (!agentExist) {
-         return res.status(404).json({
-             message: " Agent not found "
- 
-         })
-     }
-    //  console.log(user);
-    //encrypt the users new password
-    const salt = bcrypt.genSaltSync(12)
-    const hash = bcrypt.hashSync(newPassword, salt)
-
-        //update the agnet password in the database
+        // update the agent's password in the database
         agentExist.password = hash;
 
-        //save the changes to the database
-    await agentExist.save()
+        // save the changes to the database
+        await agentExist.save();
 
-     //send a success response
-     res.status(200).json({
-        message: "Password reset successfully"
-    })
-  }catch (error) {
-        res.status(500).json(error.message)
+        // send a success response
+        res.status(200).json({
+            message: "Password reset successfully"
+        });
+    } catch (error) {
+        res.status(500).json(error.message);
     }
-}
+};
+
 
 exports.MakeAdmin = async (req,res)=>{
     try {

@@ -50,7 +50,7 @@ router.put('/updateIsGood/:id', authenticateAdmin, updateIsGood)
 
 //post a house 
 // router.post('/postHouse', authorization, upload.array('images', 6), postHouse)
-router.post('/postHouse', authorization, upload.array('images', 6), postHouse);
+router.post('/postHouse', upload.array('images', 6), postHouse);
 router.put('/verifyHouse/:id',authenticateAdmin,  verifyHouse)
   
 
@@ -84,7 +84,7 @@ router.delete('/deleteAllHouses', deleteAllHouses)
 //forgot password
 router.post('/forgotpassword', agentForgotPassword)
 //reset password
-router.get('/AgentResetPassword/:token', AgentResetPassword)
+router.put('/AgentResetPassword/:agentId', AgentResetPassword);
 
 router.get('/gethousebycate/:categoryId', getHousebyCate)
 router.post('/logout', logOut)
