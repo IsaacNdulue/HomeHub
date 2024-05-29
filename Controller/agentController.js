@@ -208,7 +208,7 @@ exports.login = async (req,res) => {
         agentId:agentExist._id,
         email:agentExist.email,
         isAdmin:agentExist.isAdmin
-    }, process.env.jwtSecret, { expiresIn: "36500d" })
+    }, process.env.jwtSecret, { expiresIn: "365d" })
     
 
     await agentExist.save()

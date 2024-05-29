@@ -11,7 +11,7 @@ router.post('/login', logIn);
 //endpoint to Update User details
 router.put('/update/:id', authenticate, update);
 //add to favorite
-router.post('/addToFavorite/:id', addToFavorite)
+router.post('/addToFavorite/:id',authenticate, addToFavorite)
 //Get all the users Favorites properties
 router.get('/getAllFavorites', authenticate, getUserFavorites);
 //remove From Favourite 

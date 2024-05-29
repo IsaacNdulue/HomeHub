@@ -83,9 +83,7 @@ exports.postHouse = async (req, res) => {
     const { type, location, description, amount, categoryId } = req.body;
 
     // Extract agent's info from the token
-    const agentToken = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(agentToken, process.env.jwtSecret);
-    const agentId = decoded.agentId;
+    const { agentId } = req.params;
 
     // Finding the agent using the extracted agentId
     const agent = await agentModel.findById(agentId);
