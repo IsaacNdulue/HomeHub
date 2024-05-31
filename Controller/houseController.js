@@ -111,15 +111,24 @@ exports.postHouse = async (req, res) => {
     }
 
     // Upload images to Cloudinary
+    // const uploadedImages = await Promise.all(
+    //   req.files.map(async (file) => {
+        
+    //     const result = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' });
+    //     return result.secure_url,
+    //            result.public_id;
+    //   })
+    // );
+
     const uploadedImages = await Promise.all(
       req.files.map(async (file) => {
         
-        const result = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' });
-        return result.secure_url,
-               result.public_id;
+        const result = await cloudinary.uploader.upload(file.path, {folder: "HomeHub", resource_type: 'auto' });
+        return result.secure_url;
       })
     );
 
+    
     if (uploadedImages.length === 0) {
       return res.status(400).json({ message: 'Please upload at least one image' });
     }
