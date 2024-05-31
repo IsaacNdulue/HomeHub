@@ -114,7 +114,7 @@ exports.postHouse = async (req, res) => {
     const uploadedImages = await Promise.all(
       req.files.map(async (file) => {
         
-        const result = await cloudinary.uploader.upload(file.path, {folder: "Homehub", resource_type: 'auto' });
+        const result = await cloudinary.uploader.upload(file.path, { resource_type: 'auto' });
         return result.secure_url,
                result.public_id;
       })
