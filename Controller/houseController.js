@@ -133,7 +133,6 @@ exports.postHouse = async (req, res) => {
       return res.status(400).json({ message: 'Please upload at least one image' });
     }
 
-
     const house = await houseModel.create({
       type,
       location,
