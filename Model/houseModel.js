@@ -27,6 +27,10 @@ const houseModel = new mongoose.Schema({
    type:Boolean,
    default:false
  },
+ sponsoredAt: {
+   type: Date,
+   default: null
+ },
  isVerified:{
    type:Boolean,
    default:false

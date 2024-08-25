@@ -1,12 +1,11 @@
 const agentModel = require('../Model/agentModel')
 const cateModel = require('../Model/CateModel')
-const house = require('../Model/houseModel')
 const houseModel = require('../Model/houseModel')
 const userModel = require('../Model/userModel.js')
 const cloudinary = require('../Utility/cloudinary.js')
 const jwt = require("jsonwebtoken")
 const sendEmail = require('../helper/email')
-
+const cron = require ('node-cron')
 
 
 // exports.postHouse = async (req, res) => {
@@ -182,16 +181,16 @@ exports.sponsorPost = async (req, res) => {
     }
     
     // Update the isSponsored field to true
-    const updatedHouse = await houseModel.findByIdAndUpdate(houseId, { isSponsored: true }, { new: true });
+    const updatedHouse = await houseModel.findByIdAndUpdate(houseId, { isSponsored: true, sponsoredAt: new Date() }, { new: true });
 
     // Schedule to remove sponsorship after a week
  
-    const jobDate = new Date();
-    jobDate.setMinutes(jobDate.getMinutes() + 10080 ); // Add 1 minute to the current time
-    const job = schedule.scheduleJob(jobDate, async function() {
-      await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
-      console.log(`Sponsored house with ID ${houseId} removed from sponsored after 7days.`);
-    });
+    // const jobDate = new Date();
+    // jobDate.setMinutes(jobDate.getMinutes() + 10080 ); // Add 1 minute to the current time
+    // const job = schedule.scheduleJob(jobDate, async function() {
+    //   await houseModel.findByIdAndUpdate(houseId, { isSponsored: false });
+    //   console.log(`Sponsored house with ID ${houseId} removed from sponsored after 7days.`);
+    // });
     res.status(201).json({
       message: "House sponsored successfully",
       data: updatedHouse, 
@@ -203,6 +202,36 @@ exports.sponsorPost = async (req, res) => {
     });
   }
 }
+
+
+// Function to remove sponsorship after 30 days
+const removeExpiredSponsorships = async () => {
+  try {
+    const currentDate = new Date();
+    const houses = await houseModel.find({
+      isSponsored: true,
+      sponsoredAt: { $lte: new Date(currentDate.setDate(currentDate.getDate() - 30)) }
+    });
+
+    if (houses.length > 0) {
+      houses.forEach(async (house) => {
+        house.isSponsored = false;
+        await house.save();
+        console.log(`Sponsorship removed for house with ID ${house._id}.`);
+      });
+    } else {
+      console.log('No houses with expired sponsorship found.');
+    }
+  } catch (error) {
+    console.error('Error while removing expired sponsorships:', error.message);
+  }
+};
+
+// Schedule the task to run daily at midnight
+cron.schedule('0 0 * * *', () => {
+  console.log('Running daily task to remove expired sponsorships...');
+  removeExpiredSponsorships();
+});
 
 
 // exports.sponsorPost = async(req,res)=>{
