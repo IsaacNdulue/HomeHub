@@ -31,21 +31,44 @@
 //     console.log(`database unable to connect ${error}`)
 // })
 
-
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./router/agentRouter');
 const userRouter = require('./router/userRouter');
 const cors = require('cors');
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const cron = require('node-cron');
 
 const app = express();
+
+const swaggerOPtions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Homehub API documentation',
+            version: '1.0.0',
+            description: 'API for home hub',
+        },
+        servers: [
+            {
+                url: 'http://localhost:4000',
+            },
+        ],
+    },
+    apis: ['./router/*.js']  // Specify the path to your API files
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOPtions);
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 app.use('/uploads', express.static('uploads'));
 app.use('/api', router);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api/user', userRouter);
 
 // Your function to remove expired sponsorships
@@ -58,8 +81,7 @@ const removeExpiredSponsorships = async () => {
     }
 };
 
-// Get port and database connection string from environment variables
-const port = process.env.port || 3000; // Fallback to default port if not specified
+const port = process.env.PORT || 3000; 
 const db = process.env.DB;
 
 // Connect to MongoDB and start the server
@@ -81,5 +103,6 @@ mongoose.connect(db)
         });
     })
     .catch((error) => {
-        console.log(`Database connection error: ${error}`);
+        console.error(`Database connection error: ${error}`);
+        process.exit(1);  // Exit the process if DB connection fails
     });
